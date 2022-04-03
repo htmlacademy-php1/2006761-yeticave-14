@@ -42,6 +42,13 @@ $posters = [
     ]
 ];
 
+function price_modify($price) {
+    ceil($price);
+    if ($price>1000){
+        $price=number_format($price, '0', '', ' ');
+    }
+    return $price . ' ₽';
+}
 
 $user_name = 'Sasha'; // укажите здесь ваше имя
 ?>
@@ -110,7 +117,7 @@ $user_name = 'Sasha'; // укажите здесь ваше имя
         </div>
         <ul class="lots__list">
             <!--заполните этот список из массива с товарами-->
-            <?php foreach($posters as $key => $val): ?>
+            <?php foreach($posters as $val): ?>
             <li class="lots__item lot">
                 <div class="lot__image">
                     <img src="<?= $val['URL']; ?>" width="350" height="260" alt="">
@@ -121,7 +128,7 @@ $user_name = 'Sasha'; // укажите здесь ваше имя
                     <div class="lot__state">
                         <div class="lot__rate">
                             <span class="lot__amount">Стартовая цена</span>
-                            <span class="lot__cost"><?= $val['price']; ?><b class="rub">р</b></span>
+                            <span class="lot__cost"><?= price_modify($val['price']); ?></span>
                         </div>
                         <div class="lot__timer timer">
                             12:23

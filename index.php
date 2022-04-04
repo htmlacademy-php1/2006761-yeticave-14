@@ -42,12 +42,12 @@ $posters = [
     ]
 ];
 
-function price_modify($price) {
+function priceModify(int $price) {
     ceil($price);
-    if ($price>1000){
-        $price=number_format($price, '0', '', ' ');
+    if ($price > 1000) {
+        $price = number_format($price, 0, '', ' ');
     }
-    return $price . ' ₽';
+    return (string) $price . ' ₽';
 }
 
 $user_name = 'Sasha'; // укажите здесь ваше имя
@@ -128,7 +128,7 @@ $user_name = 'Sasha'; // укажите здесь ваше имя
                     <div class="lot__state">
                         <div class="lot__rate">
                             <span class="lot__amount">Стартовая цена</span>
-                            <span class="lot__cost"><?= price_modify($val['price']); ?></span>
+                            <span class="lot__cost"><?= priceModify($val['price']); ?></span>
                         </div>
                         <div class="lot__timer timer">
                             12:23

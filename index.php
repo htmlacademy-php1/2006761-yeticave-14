@@ -42,7 +42,7 @@ $posters = [
     ]
 ];
 
-function priceModify(int $price) {
+function priceModify(int $price): string {
     ceil($price);
     if ($price > 1000) {
         $price = number_format($price, 0, '', ' ');

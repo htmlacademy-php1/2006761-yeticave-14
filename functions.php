@@ -9,24 +9,24 @@ function priceModify(int $price): string {
 }
 
 function secDifference(string $date): int {
-    $date_end = strtotime($date);
-    $sec_difference= $date_end - time();
+    $dateEnd = strtotime($date);
+    $secDifference= $dateEnd - time();
 
-    return $sec_difference;
+    return $secDifference;
 }
 
-function formatTimer(int $sec_difference): string {
-    $hours = floor($sec_difference / 3600);
-    $minutes = floor(($sec_difference % 3600) / 60);
+function formatTimer(int $secDifference): string {
+    $hours = floor($secDifference / 3600);
+    $minutes = floor(($secDifference % 3600) / 60);
 
     return "{$hours}:{$minutes}";
 }
 
-function oneHourTimerFinishing(int $sec_difference): string {
-    $one_hour = 60 * 60;
-    $is_less_one_hour = $sec_difference <= $one_hour;
+function oneHourTimerFinishing(int $secDifference): string {
+    $oneHour = 60 * 60;
+    $isLessOneHour = $secDifference <= $oneHour;
 
-    return $is_less_one_hour ? "timer--finishing" : "";
+    return $isLessOneHour ? "timer--finishing" : "";
 }
 
 ?>

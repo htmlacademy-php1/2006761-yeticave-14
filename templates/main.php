@@ -29,8 +29,8 @@
                             <span class="lot__amount">Стартовая цена</span>
                             <span class="lot__cost"><?=priceModify($val['price']); ?></span>
                         </div>
-                        <div class="lot__timer timer">
-                            12:23
+                        <div class="lot__timer timer <?=oneHourTimerFinishing(secDifference($val['date_end'])); ?>">
+                        <?=formatTimer(secDifference($val['date_end'])); ?>
                         </div>
                     </div>
                 </div>

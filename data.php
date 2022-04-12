@@ -10,37 +10,43 @@ $posters = [
     'name' => '2014 Rossignol District Snowboard',
     'categories' => 'Доски и лыжи',
     'price' => '10999',
-    'URL' => 'img/lot-1.jpg'
+    'URL' => 'img/lot-1.jpg',
+    'dateFinish' => "2022-06-15"
     ],
     [
     'name' => 'DC Ply Mens 2016/2017 Snowboard',
     'categories' => 'Доски и лыжи',
     'price' => '159999',
-    'URL' => 'img/lot-2.jpg'
+    'URL' => 'img/lot-2.jpg',
+    'dateFinish' => "2022-06-16"
     ],
     [
     'name' => 'Крепления Union Contact Pro 2015 года размер L/XL',
     'categories' => 'Крепления',
     'price' => '8000',
-    'URL' => 'img/lot-3.jpg'
+    'URL' => 'img/lot-3.jpg',
+    'dateFinish' => "2022-06-17"
     ],
     [
     'name' => 'Ботинки для сноуборда DC Mutiny Charocal',
     'categories' => 'Ботинки',
     'price' => '10999',
-    'URL' => 'img/lot-4.jpg'
+    'URL' => 'img/lot-4.jpg',
+    'dateFinish' => "2022-06-18"
     ],
     [
     'name' => 'Куртка для сноуборда DC Mutiny Charocal',
     'categories' => 'Одежда',
     'price' => '7500',
-    'URL' => 'img/lot-5.jpg'
+    'URL' => 'img/lot-5.jpg',
+    'dateFinish' => "2022-06-19"
     ],
     [
     'name' => 'Маска Oakley Canopy',
     'categories' => 'Разное',
     'price' => '5400',
-    'URL' => 'img/lot-6.jpg'
+    'URL' => 'img/lot-6.jpg',
+    'dateFinish' => "2022-06-21"
     ]
 ];
 ?>

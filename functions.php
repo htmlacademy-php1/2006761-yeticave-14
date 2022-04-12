@@ -8,21 +8,18 @@ function priceModify(int $price): string {
     return (string) $price . ' ₽';
 }
 
-function secDifference(string $date): int {
-    $dateEnd = strtotime($date);
-    $secDifference= $dateEnd - time();
-
-    return $secDifference;
-}
-
-function formatTimer(int $secDifference): string {
+function formatTimer(string $date): string {
+    $dateFinish = strtotime($date);
+    $secDifference = $dateFinish - time();
     $hours = floor($secDifference / 3600);
     $minutes = floor(($secDifference % 3600) / 60);
 
     return "{$hours}:{$minutes}";
 }
 
-function oneHourTimerFinishing(int $secDifference): string {
+function oneHourTimerFinishing(string $date): string {
+    $dateFinish = strtotime($date);
+    $secDifference = $dateFinish - time();
     $oneHour = 60 * 60;
     $isLessOneHour = $secDifference <= $oneHour;
 

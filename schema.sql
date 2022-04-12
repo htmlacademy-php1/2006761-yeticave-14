@@ -2,13 +2,13 @@ CREATE DATABASE yeticave DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general
 
 USE yeticave;
 
-CREATE TABLE categories (
+CREATE TABLE category (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name CHAR(64) NOT NULL,
     symbol_code CHAR(128) NOT NULL
 );
 
-CREATE TABLE lots (
+CREATE TABLE lot (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     winner_id INT NOT NULL,
@@ -22,7 +22,7 @@ CREATE TABLE lots (
     finished_at TIMESTAMP
 );
 
-CREATE TABLE bids (
+CREATE TABLE bid (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     lot_id INT NOT NULL,
@@ -30,26 +30,24 @@ CREATE TABLE bids (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE users (
+CREATE TABLE user (
     id INT AUTO_INCREMENT PRIMARY KEY ,
-    lot_id INT NOT NULL,
-    bids_id INT NOT NULL,
     name CHAR(64) NOT NULL,
     contacts TEXT NOT NULL,
     email CHAR(64) NOT NULL,
-    password CHAR(64) NOT NULL,
+    password CHAR(255) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE INDEX name ON categories(name);
-CREATE INDEX finished_at ON lots(finished_at);
-CREATE INDEX created_at ON lots(created_at);
-CREATE INDEX user_id ON lots(user_id);
-CREATE INDEX category_id ON lots(category_id);
+CREATE INDEX name ON category(name);
+CREATE INDEX finished_at ON lot(finished_at);
+CREATE INDEX created_at ON lot(created_at);
+CREATE INDEX user_id ON lot(user_id);
+CREATE INDEX category_id ON lot(category_id);
 
-CREATE INDEX user_id ON bids(user_id);
-CREATE INDEX lot_id ON bids(lot_id);
+CREATE INDEX user_id ON bid(user_id);
+CREATE INDEX lot_id ON bid(lot_id);
 
-CREATE UNIQUE INDEX email ON users(email);
+CREATE UNIQUE INDEX email ON user(email);
 
-CREATE FULLTEXT INDEX search_name_dscrpt ON lots(name, description);
+CREATE FULLTEXT INDEX search_name_dscrpt ON lot(name, description);

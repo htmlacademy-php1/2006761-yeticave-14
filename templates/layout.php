@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -54,9 +53,9 @@
     <nav class="nav">
         <ul class="nav__list container">
             <!--заполните этот список из массива категорий-->
-            <?php foreach ($categories as $val): ?>
+            <?php foreach ($categories as $value): ?>
             <li class="nav__item">
-                <a href="pages/all-lots.html"><?=$val; ?></a>
+                <a href="pages/all-lots.html"><?=$value['name']; ?></a>
             </li>
             <?php endforeach; ?>
         </ul>

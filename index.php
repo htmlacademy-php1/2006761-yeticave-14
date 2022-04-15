@@ -6,16 +6,16 @@ require_once('init.php');
 
 if (!$link) {
     $error = mysqli_connect_error();
-    print("Ошибка MySQL: " . $error);
+    print('Error MySQL: ' . $error);
 } else {
-    mysqli_set_charset($link, charset: "utf8");
+    mysqli_set_charset($link, "utf8");
     $sqlCategories = 'SELECT * FROM category';
     $result = mysqli_query($link, $sqlCategories);
     if ($result) {
         $categories = mysqli_fetch_all($result, MYSQLI_ASSOC);
     } else {
         $error = mysqli_error($link);
-        print("Ошибка MySQL: " . $error);
+        print('Error MySQL: ' . $error);
            }
 
     $sqlPosters = 'SELECT l.name AS lot_name, start_price, img_url, finished_at, c.name AS cat_name FROM lot AS l
@@ -26,7 +26,7 @@ if (!$link) {
     }
     else {
         $error = mysqli_error($link);
-        print("Ошибка MySQL: " . $error);
+        print("Error MySQL: " . $error);
     }
 
     $pageContent = include_template('main.php', [

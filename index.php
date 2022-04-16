@@ -18,8 +18,10 @@ if (!$link) {
         print('Error MySQL: ' . $error);
            }
 
-    $sqlPosters = 'SELECT l.name AS lot_name, start_price, img_url, finished_at, c.name AS cat_name FROM lot AS l
-                   JOIN category AS c ON c.id = l.category_id';
+    $sqlPosters = 'SELECT l.id AS id, l.name AS lot_name, start_price, img_url, finished_at, c.name AS cat_name FROM lot AS l
+                   JOIN category AS c ON c.id = l.category_id
+                   WHERE l.finished_at > NOW()
+                   ORDER BY l.created_at DESC';
     $result = mysqli_query($link, $sqlPosters);
     if ($result) {
         $lots = mysqli_fetch_all($result, MYSQLI_ASSOC);
@@ -44,5 +46,3 @@ if (!$link) {
 
     print($layoutContent);
 }
-
-

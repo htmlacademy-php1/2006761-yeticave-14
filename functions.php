@@ -26,13 +26,17 @@ function oneHourTimerFinishing(string $date): string {
     return $isLessOneHour ? "timer--finishing" : "";
 }
 
-function checkExistDbVal($checking_item)
-{
+function checkExistDbVal($checking_item) {
   if (empty($checking_item)) {
     $error = include_template('404.php', [
     ]);
     print($error);
   }
+}
+
+function minPrice(int $curPrice, int $stepPrice): int {
+    $minPrice = $curPrice + $stepPrice;
+    return $curPrice;
 }
 
 ?>

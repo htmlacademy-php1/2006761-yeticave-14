@@ -18,16 +18,23 @@ if (!$link) {
     } else {
         $error = mysqli_error($link);
         print('Error MySQL: ' . $error);
-           }
+    }
 
-    $sqlCatLot = 'SELECT l.name AS lot_name, start_price, step_price, description, img_url, finished_at, c.name AS cat_name FROM lot AS l
-                   JOIN category AS c ON c.id = l.category_id
-                   WHERE l.id = ' .$lot_id;
+    $sqlCatLot = 'SELECT l.name as lot_name, l.description, l.img_url, l.finished_at, l.start_price, l.step_price,
+                  c.name as cat_name,
+                  MAX(b.price) as max_price
+                  FROM lot AS l
+                  JOIN category AS c
+                  ON l.category_id = c.id
+                  LEFT JOIN bid AS b
+                  ON b.lot_id = l.id
+                  WHERE
+                  l.finished_at > NOW() AND l.id = '.$lot_id.'
+                  GROUP BY b.lot_id';
     $result = mysqli_query($link, $sqlCatLot);
     if ($result) {
         $ArrCatLot = mysqli_fetch_assoc($result);
-    }
-    else {
+    } else {
         $error = mysqli_error($link);
         print("Error MySQL: " . $error);
     }
@@ -39,19 +46,15 @@ if (!$link) {
     $result = mysqli_query($link, $sqlBidUser);
     if ($result) {
         $ArrBidUser = mysqli_fetch_all($result, MYSQLI_ASSOC);
-    }
-    else {
+    } else {
         $error = mysqli_error($link);
         print("Error MySQL: " . $error);
     }
-
-    $minPrice = $ArrCatLot['start_price'] + $ArrCatLot['step_price'];
 
     $pageContent = include_template('lot.php', [
         'ArrCategories' => $ArrCategories,
         'ArrCatLot' => $ArrCatLot,
         'ArrBidUser' => $ArrBidUser,
-        'minPrice' => $minPrice,
     ]);
 
     $layoutContent = include_template('layout.php', [

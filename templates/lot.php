@@ -25,10 +25,10 @@
         <div class="lot-item__cost-state">
             <div class="lot-item__rate">
             <span class="lot-item__amount">Текущая цена</span>
-            <span class="lot-item__cost"><?=priceModify($ArrCatLot['start_price']); ?></span>
+            <span class="lot-item__cost"><?=priceModify($minPrice = ((count($ArrBidUser)===0)? $ArrCatLot['start_price'] : $ArrCatLot['max_price'])) ?></span>
             </div>
             <div class="lot-item__min-cost">
-            Мин. ставка <span><?=priceModify($minPrice); ?></span>
+            Мин. ставка <span><?=priceModify($minPrice = ($minPrice===$ArrCatLot['start_price'])? $minPrice + $ArrCatLot['step_price'] : $ArrCatLot['max_price'] + $ArrCatLot['step_price']) ?></span>
             </div>
         </div>
         <form class="lot-item__form" action="https://echo.htmlacademy.ru" method="post" autocomplete="off">

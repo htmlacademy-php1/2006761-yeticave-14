@@ -9,6 +9,7 @@ $lotId = intval($_GET['ID']);
 $sqlCategories = getCategories($link);
 
 $sqlCatLot = getCatLot($link, $lotId);
+checkExistDbVal($sqlCatLot);
 
 $sqlBidUser = getBidUser($link, $lotId);
 

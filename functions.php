@@ -25,12 +25,12 @@ function oneHourTimerFinishing(string $date): string {
 
     return $isLessOneHour ? "timer--finishing" : "";
 }
-
-function checkExistDbVal(array $checkingItem) {
-  if (empty($checkingItem)) {
-    $error = include_template('404.php', [
-    ]);
-    print($error);
+//Проверяет наличие значения из БД
+function checkExistDbVal(mixed $checkingItem): void {
+  if (empty($checkingItem) || $checkingItem ===null) {
+    print(include_template('404.php', [
+    ]));
+    die();
   }
 }
 
@@ -65,7 +65,7 @@ function getPosters(mysqli $link): array {
     }
 }
 
-function getCatLot(mysqli $link, int $lotId): array {
+function getCatLot(mysqli $link, int $lotId): mixed {
 
     $sql = 'SELECT l.name as lot_name, l.description, l.img_url, l.finished_at, l.start_price, l.step_price,
                   c.name as cat_name,
@@ -81,14 +81,7 @@ function getCatLot(mysqli $link, int $lotId): array {
     $result = mysqli_stmt_get_result($stmt);
 
     if ($result) {
-        $arr = mysqli_fetch_assoc($result);
-        if ($arr===NULL) {
-            $error = include_template('404.php', [
-            ]);
-            print($error);
-            die();
-        }
-        return $arr;
+        return mysqli_fetch_assoc($result);
     } else {
         $error = mysqli_error($link);
         print("Error MySQL: " . $error);
@@ -107,7 +100,6 @@ function getBidUser(mysqli $link, int $lot_id): array {
 
     if ($result) {
         return mysqli_fetch_all($result, MYSQLI_ASSOC);
-
     } else {
         $error = mysqli_error($link);
         print("Error MySQL: " . $error);

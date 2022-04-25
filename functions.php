@@ -227,4 +227,42 @@ function getDateRange(string $finishedAt, string $now): array {
     return [$hours, $minutes];
 }
 
+function addUser(mysqli $link, array $registration): mixed {
+    $sql = 'INSERT INTO user (email, password, name, contacts) VALUES (?, ?, ?, ?)';
+    $stmt = db_get_prepare_stmt($link, $sql, $registration);
+    return mysqli_stmt_execute($stmt);
+}
+
+function validateEmail(mysqli $link, array $registration) {
+    $email = $registration['email'];
+    if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $sql = "SELECT email FROM user WHERE email = '" . $email . "'";
+        $result = mysqli_query($link, $sql);
+        if ($result) {
+            if (!empty(mysqli_fetch_all($result, MYSQLI_ASSOC))) {
+                return 'Данный e-mail занят';
+            }
+        } else {
+            print("Error MySQL: " . mysqli_error($link));
+            die();
+        }
+    } else {
+        return 'Некорректный e-mail';
+    }
+}
+
+function validateFormSignUp(mysqli $link, array $registration): array {
+    $requiredFields = ['email', 'password', 'name', 'contacts'];
+
+    $errors = [];
+    foreach ($registration as $key => $value) {
+        if (in_array($key, $requiredFields) && empty($value)) {
+            $errors[$key] = "Поле надо заполнить";
+        } elseif ($key === 'email') {
+            $errors['email'] = validateEmail($link, $registration);
+        }
+    }
+    return $errors;
+}
+
 ?>

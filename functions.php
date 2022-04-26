@@ -110,8 +110,11 @@ function getPostVal(mixed $val): ?string {
     return $_POST[$val] ?? "";
 }
 
-function addLot(mysqli $link, array $lot): mixed {
+function addLot(mysqli $link, array $lot, $files): bool {
+
     $lot['finished_at'] = date("Y-m-d H:i:s", strtotime($lot['finished_at']));
+    $lot['img_url'] = uploadFile($files);
+
     $sql = 'INSERT INTO lot
 (user_id, name, category_id, description, start_price, step_price, finished_at, img_url)
 VALUES (1, ?, ?, ?, ?, ?, ?, ?)';
@@ -120,32 +123,25 @@ VALUES (1, ?, ?, ?, ?, ?, ?, ?)';
     return mysqli_stmt_execute($stmt);
 }
 
-function uploadFile(array $file): string {
-    $tmpName = $file['img_url']['tmp_name'];
+function uploadFile(array $files): string {
+    $tmpName = $files['img_url']['tmp_name'];
     $fileType = mime_content_type($tmpName);
 
-    if ($fileType === 'image/png') {
-        $fileName = uniqid() . '.png';
-        move_uploaded_file($tmpName, 'uploads/' . $fileName);
-        return 'uploads/' . $fileName;
-    } elseif ($fileType === 'image/jpeg') {
-        $fileName = uniqid() . '.jpeg';
-        move_uploaded_file($tmpName, 'uploads/' . $fileName);
-        return 'uploads/' . $fileName;
-    } else {
-        return '';
-    }
+    switch($fileType) {
+        case "image/png":
+            $extension = '.png';
+            break;
+        case "image/jpeg":
+            $extension = '.jpeg';
+            break;
+    } 
+    $fileName = uniqid() . $extension;
+    move_uploaded_file($tmpName, 'uploads/' . $fileName);
+
+    return 'uploads/' . $fileName;
 }
 
-function getCategoriesId(array $arrayCategories): array {
-    $categoriesId = [];
-    foreach ($arrayCategories as $value) {
-        $categoriesId[] = $value['id'];
-    }
-    return $categoriesId;
-}
-
-function validateFormLot(array $lot, array $categoriesId): array {
+function validateFormLot(array $lot, array $categoriesId, $files): array {
     $requiredFields = ['name', 'category_id', 'description', 'start_price', 'step_price', 'finished_at'];
 
     $rules = [
@@ -176,6 +172,8 @@ function validateFormLot(array $lot, array $categoriesId): array {
             $errors[$key] = "Поле надо заполнить";
         }
     }
+
+    $errors['img_url'] = ValidateImg($files);
 
     return $errors;
 }
@@ -225,6 +223,22 @@ function getDateRange(string $finishedAt, string $now): array {
     }
 
     return [$hours, $minutes];
+}
+
+function ValidateImg(array $files): string {
+
+    if (empty($files['img_url']['name'])) {
+        return 'Загрузите картинку';
+    }
+
+    $tmpName = $files['img_url']['tmp_name'];
+    $fileType = mime_content_type($tmpName);
+
+    if ($fileType !== 'image/png' && $fileType !== 'image/jpeg') {
+        return 'Загрузите картинку в формате png или jpeg';
+    }
+
+    return '';   
 }
 
 ?>

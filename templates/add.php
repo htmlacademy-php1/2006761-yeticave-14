@@ -34,7 +34,7 @@
        <?php $classname = isset($errors['description']) ? "form__item--invalid" : "" ?>
       <div class="form__item form__item--wide <?=$classname; ?>">
         <label for="message">Описание <sup>*</sup></label>
-        <textarea id="message" name="description" value="<?=getPostVal('description'); ?>" placeholder="Напишите описание лота"></textarea>
+        <textarea id="message" name="description" placeholder="Напишите описание лота"><?=getPostVal('description'); ?></textarea>
         <span class="form__error"><?=isset($errors['description']) ? $errors['description'] : '' ?></span>
       </div>
       <?php $classname = isset($errors['img_url']) ? "form__item--invalid" : "" ?>

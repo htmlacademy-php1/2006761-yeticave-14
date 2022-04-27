@@ -9,8 +9,12 @@ $sqlCategories = getCategories($link);
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     //Получаем значения из формы
-    $registration = filter_input_array(INPUT_POST, ['email' => FILTER_DEFAULT, 'password' => FILTER_DEFAULT,
-    'name' => FILTER_DEFAULT, 'contacts' => FILTER_DEFAULT], true);
+    $registration = filter_input_array(INPUT_POST, [
+        'email' => FILTER_DEFAULT,
+        'password' => FILTER_DEFAULT,
+        'name' => FILTER_DEFAULT,
+        'contacts' => FILTER_DEFAULT
+    ], true);
 
     $errors = validateFormSignUp($link, $registration);
 

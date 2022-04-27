@@ -23,7 +23,7 @@ function oneHourTimerFinishing(string $date): string {
     $oneHour = 60 * 60;
     $isLessOneHour = $secDifference <= $oneHour;
 
-    return $isLessOneHour ? "timer--finishing" : "";
+    return $isLessOneHour ? 'timer--finishing' : '';
 }
 //Проверяет наличие значения из БД
 function checkExistDbVal(mixed $checkingItem): void {
@@ -107,11 +107,14 @@ function getBidUser(mysqli $link, int $lot_id): array {
 }
 
 function getPostVal(mixed $val): ?string {
-    return $_POST[$val] ?? "";
+    return $_POST[$val] ?? '';
 }
 
-function addLot(mysqli $link, array $lot): mixed {
+function addLot(mysqli $link, array $lot, $files): bool {
+
     $lot['finished_at'] = date("Y-m-d H:i:s", strtotime($lot['finished_at']));
+    $lot['img_url'] = uploadFile($files);
+
     $sql = 'INSERT INTO lot
 (user_id, name, category_id, description, start_price, step_price, finished_at, img_url)
 VALUES (1, ?, ?, ?, ?, ?, ?, ?)';
@@ -120,32 +123,25 @@ VALUES (1, ?, ?, ?, ?, ?, ?, ?)';
     return mysqli_stmt_execute($stmt);
 }
 
-function uploadFile(array $file): string {
-    $tmpName = $file['img_url']['tmp_name'];
+function uploadFile(array $files): string {
+    $tmpName = $files['img_url']['tmp_name'];
     $fileType = mime_content_type($tmpName);
 
-    if ($fileType === 'image/png') {
-        $fileName = uniqid() . '.png';
-        move_uploaded_file($tmpName, 'uploads/' . $fileName);
-        return 'uploads/' . $fileName;
-    } elseif ($fileType === 'image/jpeg') {
-        $fileName = uniqid() . '.jpeg';
-        move_uploaded_file($tmpName, 'uploads/' . $fileName);
-        return 'uploads/' . $fileName;
-    } else {
-        return '';
-    }
+    switch($fileType) {
+        case 'image/png':
+            $extension = '.png';
+            break;
+        case 'image/jpeg':
+            $extension = '.jpeg';
+            break;
+    } 
+    $fileName = uniqid() . $extension;
+    move_uploaded_file($tmpName, 'uploads/' . $fileName);
+
+    return 'uploads/' . $fileName;
 }
 
-function getCategoriesId(array $arrayCategories): array {
-    $categoriesId = [];
-    foreach ($arrayCategories as $value) {
-        $categoriesId[] = $value['id'];
-    }
-    return $categoriesId;
-}
-
-function validateFormLot(array $lot, array $categoriesId): array {
+function validateFormLot(array $lot, array $categoriesId, $files): array {
     $requiredFields = ['name', 'category_id', 'description', 'start_price', 'step_price', 'finished_at'];
 
     $rules = [
@@ -173,16 +169,18 @@ function validateFormLot(array $lot, array $categoriesId): array {
         }
         //Входит ли поле к списку заполнения
         if (in_array($key, $requiredFields) and empty($value)) {
-            $errors[$key] = "Поле надо заполнить";
+            $errors[$key] = 'Поле надо заполнить';
         }
     }
+
+    $errors['img_url'] = validateImg($files);
 
     return $errors;
 }
 
 function validateCategory(string $id, array $allowed_list): ?string {
     if (!in_array($id, $allowed_list)) {
-        return "Указана несуществующая категория";
+        return 'Указана несуществующая категория';
     }
     return null;
 }
@@ -190,18 +188,18 @@ function validateCategory(string $id, array $allowed_list): ?string {
 function validateValue(string $value): ?string {
     $value = intval($value);
     if ($value <= 0) {
-        return "Значение должно быть больше нуля";
+        return 'Значение должно быть больше нуля';
     }
     return null;
 }
 
 function validateFinishedAt(string $finishedAt): ?string {
     if (!is_date_valid($finishedAt)) {
-        return "Значение должно быть датой в формате «ГГГГ-ММ-ДД»";
+        return 'Значение должно быть датой в формате «ГГГГ-ММ-ДД»';
     }
     $time = getDateRange($finishedAt, 'now');
     if ($time[0] < 24) {
-        return "Дата должна быть больше текущей даты, хотя бы на один день.";
+        return 'Дата должна быть больше текущей даты, хотя бы на один день.';
     }
     return null;
 }
@@ -225,6 +223,22 @@ function getDateRange(string $finishedAt, string $now): array {
     }
 
     return [$hours, $minutes];
+}
+
+function validateImg(array $files): string {
+
+    if (empty($files['img_url']['name'])) {
+        return 'Загрузите картинку';
+    }
+
+    $tmpName = $files['img_url']['tmp_name'];
+    $fileType = mime_content_type($tmpName);
+
+    if ($fileType !== 'image/png' && $fileType !== 'image/jpeg') {
+        return 'Загрузите картинку в формате png или jpeg';
+    }
+
+    return '';   
 }
 
 function addUser(mysqli $link, array $registration): mixed {
@@ -257,7 +271,7 @@ function validateFormSignUp(mysqli $link, array $registration): array {
     $errors = [];
     foreach ($registration as $key => $value) {
         if (in_array($key, $requiredFields) && empty($value)) {
-            $errors[$key] = "Поле надо заполнить";
+            $errors[$key] = 'Поле надо заполнить';
         } elseif ($key === 'email') {
             $errors['email'] = validateEmail($link, $registration);
         }

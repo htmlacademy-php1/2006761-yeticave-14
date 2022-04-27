@@ -9,28 +9,23 @@ $sqlCategories = getCategories($link);
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     //Получаем значения из формы
-    $lot = filter_input_array(INPUT_POST, ['name' => FILTER_DEFAULT, 'category_id' => FILTER_DEFAULT,
-    'description' => FILTER_DEFAULT, 'start_price' => FILTER_DEFAULT, 'step_price' => FILTER_DEFAULT, 'finished_at' => FILTER_DEFAULT], true);
+    $lot = filter_input_array(INPUT_POST, [
+        'name' => FILTER_DEFAULT,
+        'category_id' => FILTER_DEFAULT,
+        'description' => FILTER_DEFAULT,
+        'start_price' => FILTER_DEFAULT,
+        'step_price' => FILTER_DEFAULT,
+        'finished_at' => FILTER_DEFAULT
+    ], true);
 
-    $categoriesId = getCategoriesId($sqlCategories);
-    $errors = validateFormLot($lot, $categoriesId);
-
-    if (!empty($_FILES['img_url']['name'])) {
-        $fileName = uploadFile($_FILES);
-        if (empty($fileName)) {
-            $errors['img_url'] = 'Загрузите картинку в формате png или jpeg';
-        } else {
-            $lot['img_url'] = $fileName;
-        }
-    } else {
-        $errors['img_url'] = 'Загрузите картинку';
-    }
+    $categoriesId = array_column($sqlCategories, 'id');
+    $errors = validateFormLot($lot, $categoriesId, $_FILES);
 
     //Удаляем все null значения
     $errors = array_filter($errors);
 
     if (empty($errors)) {
-        $result = addLot($link, $lot);
+        $result = addLot($link, $lot, $_FILES);
         if ($result) {
             $lotId = mysqli_insert_id($link);
             header("Location: lot.php?ID=" . $lotId);

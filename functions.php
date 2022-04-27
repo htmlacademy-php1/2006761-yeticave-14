@@ -105,4 +105,140 @@ function getBidUser(mysqli $link, int $lot_id): array {
         print("Error MySQL: " . $error);
     }
 }
+
+function getPostVal(mixed $val): ?string {
+    return $_POST[$val] ?? "";
+}
+
+function addLot(mysqli $link, array $lot, $files): bool {
+
+    $lot['finished_at'] = date("Y-m-d H:i:s", strtotime($lot['finished_at']));
+    $lot['img_url'] = uploadFile($files);
+
+    $sql = 'INSERT INTO lot
+(user_id, name, category_id, description, start_price, step_price, finished_at, img_url)
+VALUES (1, ?, ?, ?, ?, ?, ?, ?)';
+
+    $stmt = db_get_prepare_stmt($link, $sql, $lot);
+    return mysqli_stmt_execute($stmt);
+}
+
+function uploadFile(array $files): string {
+    $tmpName = $files['img_url']['tmp_name'];
+    $fileType = mime_content_type($tmpName);
+
+    switch($fileType) {
+        case "image/png":
+            $extension = '.png';
+            break;
+        case "image/jpeg":
+            $extension = '.jpeg';
+            break;
+    } 
+    $fileName = uniqid() . $extension;
+    move_uploaded_file($tmpName, 'uploads/' . $fileName);
+
+    return 'uploads/' . $fileName;
+}
+
+function validateFormLot(array $lot, array $categoriesId, $files): array {
+    $requiredFields = ['name', 'category_id', 'description', 'start_price', 'step_price', 'finished_at'];
+
+    $rules = [
+        'category_id' => function ($id) use ($categoriesId) {
+            return validateCategory($id, $categoriesId);
+        },
+        'start_price' => function ($startPrice) {
+            return validateValue($startPrice);
+        },
+        'finished_at' => function ($finishedAt) {
+            return validateFinishedAt($finishedAt);
+        },
+        'step_price' => function ($stepPrice) {
+            return validateValue($stepPrice);
+        }
+    ];
+
+    $errors = [];
+
+    //Проходим по полученным значения из формы и применяем к ним функции валидации
+    foreach ($lot as $key => $value) {
+        if (isset($rules[$key])) {
+            $rule = $rules[$key];
+            $errors[$key] = $rule($value);
+        }
+        //Входит ли поле к списку заполнения
+        if (in_array($key, $requiredFields) and empty($value)) {
+            $errors[$key] = "Поле надо заполнить";
+        }
+    }
+
+    $errors['img_url'] = ValidateImg($files);
+
+    return $errors;
+}
+
+function validateCategory(string $id, array $allowed_list): ?string {
+    if (!in_array($id, $allowed_list)) {
+        return "Указана несуществующая категория";
+    }
+    return null;
+}
+
+function validateValue(string $value): ?string {
+    $value = intval($value);
+    if ($value <= 0) {
+        return "Значение должно быть больше нуля";
+    }
+    return null;
+}
+
+function validateFinishedAt(string $finishedAt): ?string {
+    if (!is_date_valid($finishedAt)) {
+        return "Значение должно быть датой в формате «ГГГГ-ММ-ДД»";
+    }
+    $time = getDateRange($finishedAt, 'now');
+    if ($time[0] < 24) {
+        return "Дата должна быть больше текущей даты, хотя бы на один день.";
+    }
+    return null;
+}
+
+function getDateRange(string $finishedAt, string $now): array {
+    $finishedAt = date_create($finishedAt);
+    $now = date_create($now);
+
+    if ($finishedAt <= $now) {
+        return [0, 0];
+    }
+    $diff = date_diff($now, $finishedAt);
+
+    $days = $diff->days;
+    $hours = $diff->h;
+    $minutes = $diff->i;
+
+    if ($days > 0) {
+        $hours = $days * 24 + $hours;
+        return [$hours, $minutes];
+    }
+
+    return [$hours, $minutes];
+}
+
+function ValidateImg(array $files): string {
+
+    if (empty($files['img_url']['name'])) {
+        return 'Загрузите картинку';
+    }
+
+    $tmpName = $files['img_url']['tmp_name'];
+    $fileType = mime_content_type($tmpName);
+
+    if ($fileType !== 'image/png' && $fileType !== 'image/jpeg') {
+        return 'Загрузите картинку в формате png или jpeg';
+    }
+
+    return '';   
+}
+
 ?>

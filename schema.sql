@@ -11,7 +11,7 @@ CREATE TABLE category (
 CREATE TABLE lot (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
-    winner_id INT NOT NULL,
+    winner_id INT NULL,
     category_id INT NOT NULL,
     name CHAR(64) NOT NULL,
     description TEXT NOT NULL,

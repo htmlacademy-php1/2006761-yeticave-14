@@ -1,10 +1,10 @@
 <nav class="nav">
       <ul class="nav__list container">
-      <?foreach($sqlCategories as $value):?>
+      <?php foreach($sqlCategories as $value):?>
         <li class="nav__item">
           <a href="all-lots.html"><?=$value['name'] ?></a>
         </li>
-      <?endforeach;?>
+      <?php endforeach;?>
       </ul>
     </nav>
     <?php $classname = !empty($errors) ? "form--invalid" : "" ?>

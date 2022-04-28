@@ -23,7 +23,7 @@ function oneHourTimerFinishing(string $date): string {
     $oneHour = 60 * 60;
     $isLessOneHour = $secDifference <= $oneHour;
 
-    return $isLessOneHour ? "timer--finishing" : "";
+    return $isLessOneHour ? 'timer--finishing' : '';
 }
 //Проверяет наличие значения из БД
 function checkExistDbVal(mixed $checkingItem): void {
@@ -107,7 +107,7 @@ function getBidUser(mysqli $link, int $lot_id): array {
 }
 
 function getPostVal(mixed $val): ?string {
-    return $_POST[$val] ?? "";
+    return $_POST[$val] ?? '';
 }
 
 function addLot(mysqli $link, array $lot, $files): bool {
@@ -128,10 +128,10 @@ function uploadFile(array $files): string {
     $fileType = mime_content_type($tmpName);
 
     switch($fileType) {
-        case "image/png":
+        case 'image/png':
             $extension = '.png';
             break;
-        case "image/jpeg":
+        case 'image/jpeg':
             $extension = '.jpeg';
             break;
     } 
@@ -169,18 +169,18 @@ function validateFormLot(array $lot, array $categoriesId, $files): array {
         }
         //Входит ли поле к списку заполнения
         if (in_array($key, $requiredFields) and empty($value)) {
-            $errors[$key] = "Поле надо заполнить";
+            $errors[$key] = 'Поле надо заполнить';
         }
     }
 
-    $errors['img_url'] = ValidateImg($files);
+    $errors['img_url'] = validateImg($files);
 
     return $errors;
 }
 
 function validateCategory(string $id, array $allowed_list): ?string {
     if (!in_array($id, $allowed_list)) {
-        return "Указана несуществующая категория";
+        return 'Указана несуществующая категория';
     }
     return null;
 }
@@ -188,18 +188,18 @@ function validateCategory(string $id, array $allowed_list): ?string {
 function validateValue(string $value): ?string {
     $value = intval($value);
     if ($value <= 0) {
-        return "Значение должно быть больше нуля";
+        return 'Значение должно быть больше нуля';
     }
     return null;
 }
 
 function validateFinishedAt(string $finishedAt): ?string {
     if (!is_date_valid($finishedAt)) {
-        return "Значение должно быть датой в формате «ГГГГ-ММ-ДД»";
+        return 'Значение должно быть датой в формате «ГГГГ-ММ-ДД»';
     }
     $time = getDateRange($finishedAt, 'now');
     if ($time[0] < 24) {
-        return "Дата должна быть больше текущей даты, хотя бы на один день.";
+        return 'Дата должна быть больше текущей даты, хотя бы на один день.';
     }
     return null;
 }
@@ -225,7 +225,7 @@ function getDateRange(string $finishedAt, string $now): array {
     return [$hours, $minutes];
 }
 
-function ValidateImg(array $files): string {
+function validateImg(array $files): string {
 
     if (empty($files['img_url']['name'])) {
         return 'Загрузите картинку';
@@ -239,6 +239,45 @@ function ValidateImg(array $files): string {
     }
 
     return '';   
+}
+
+function addUser(mysqli $link, array $registration): bool {
+    $sql = 'INSERT INTO user (email, password, name, contacts) VALUES (?, ?, ?, ?)';
+    $stmt = db_get_prepare_stmt($link, $sql, $registration);
+    return mysqli_stmt_execute($stmt);
+}
+
+function validateEmail(mysqli $link, array $registration): string {
+    $email = $registration['email'];
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+         return 'Некорректный e-mail';
+    }
+
+    $sql = "SELECT email FROM user WHERE email = '" . $email . "'";
+    $result = mysqli_query($link, $sql);
+    if ($result) {
+        if (!empty(mysqli_fetch_all($result, MYSQLI_ASSOC))) {
+            return 'Данный e-mail занят';
+        }
+        return '';
+    } else {
+        print("Error MySQL: " . mysqli_error($link));
+        die();
+    }
+}
+
+function validateFormSignUp(mysqli $link, array $registration): array {
+    $requiredFields = ['email', 'password', 'name', 'contacts'];
+
+    $errors = [];
+    foreach ($registration as $key => $value) {
+        if (in_array($key, $requiredFields) && empty($value)) {
+            $errors[$key] = 'Поле надо заполнить';
+        } elseif ($key === 'email') {
+            $errors['email'] = validateEmail($link, $registration);
+        }
+    }
+    return $errors;
 }
 
 ?>

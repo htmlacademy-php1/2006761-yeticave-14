@@ -1,10 +1,12 @@
 <?php
-require_once('helpers.php');
-require_once('functions.php');
-require_once('data.php');
-require_once('init.php');
+
+require_once('boot.php');
 
 $sqlCategories = getCategories($link);
+$userName = checkSessionName();
+if (empty($userName)) {
+    errorPage($sqlCategories, $userName);
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
@@ -19,20 +21,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     ], true);
 
     $categoriesId = array_column($sqlCategories, 'id');
-    $errors = validateFormLot($lot, $categoriesId, $_FILES);
+    $errors = validateFormLot($lot, $categoriesId);
 
     //Удаляем все null значения
     $errors = array_filter($errors);
 
     if (empty($errors)) {
-        $result = addLot($link, $lot, $_FILES);
-        if ($result) {
+        if (addLot($link, $lot)) {
             $lotId = mysqli_insert_id($link);
             header("Location: lot.php?ID=" . $lotId);
         } else {
-            print(include_template('404.php', [
-            ]));
-            exit();
+        print("Error MySQL: " . mysqli_error($link));
+        exit();
         }
     }
 
@@ -44,9 +44,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $layoutContent = include_template('layout.php', [
         'categories' => $sqlCategories,
         'content' => $pageContent,
-        'title' => $title,
-        'user_name' => $user_name,
-        'is_auth' => $is_auth,
+        'title' => 'Добавление лота',
+        'userName' => $userName,
     ]);
 
     print($layoutContent);
@@ -59,9 +58,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $layoutContent = include_template('layout.php', [
         'categories' => $sqlCategories,
         'content' => $pageContent,
-        'title' => $title,
-        'user_name' => $user_name,
-        'is_auth' => $is_auth,
+        'title' => 'Добавление лота',
+        'userName' => $userName,
     ]);
 
     print($layoutContent);

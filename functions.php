@@ -110,21 +110,22 @@ function getPostVal(mixed $val): ?string {
     return $_POST[$val] ?? '';
 }
 
-function addLot(mysqli $link, array $lot, $files): bool {
-
+function addLot(mysqli $link, array $lot): bool {
     $lot['finished_at'] = date("Y-m-d H:i:s", strtotime($lot['finished_at']));
-    $lot['img_url'] = uploadFile($files);
-
-    $sql = 'INSERT INTO lot
-(user_id, name, category_id, description, start_price, step_price, finished_at, img_url)
-VALUES (1, ?, ?, ?, ?, ?, ?, ?)';
+    $lot['img_url'] = uploadFile();
+    $id = $_SESSION['user']['id'];
+    
+    $sql = "INSERT INTO lot
+            (user_id, name, category_id, description, start_price, step_price, finished_at, img_url)
+            VALUES (".$id.", ?, ?, ?, ?, ?, ?, ?)";
 
     $stmt = db_get_prepare_stmt($link, $sql, $lot);
+
     return mysqli_stmt_execute($stmt);
 }
 
-function uploadFile(array $files): string {
-    $tmpName = $files['img_url']['tmp_name'];
+function uploadFile(): string {
+    $tmpName = $_FILES['img_url']['tmp_name'];
     $fileType = mime_content_type($tmpName);
 
     switch($fileType) {
@@ -141,7 +142,7 @@ function uploadFile(array $files): string {
     return 'uploads/' . $fileName;
 }
 
-function validateFormLot(array $lot, array $categoriesId, $files): array {
+function validateFormLot(array $lot, array $categoriesId): array {
     $requiredFields = ['name', 'category_id', 'description', 'start_price', 'step_price', 'finished_at'];
 
     $rules = [
@@ -173,7 +174,7 @@ function validateFormLot(array $lot, array $categoriesId, $files): array {
         }
     }
 
-    $errors['img_url'] = validateImg($files);
+    $errors['img_url'] = validateImg();
 
     return $errors;
 }
@@ -225,13 +226,13 @@ function getDateRange(string $finishedAt, string $now): array {
     return [$hours, $minutes];
 }
 
-function validateImg(array $files): string {
+function validateImg(): string {
 
-    if (empty($files['img_url']['name'])) {
+    if (empty($_FILES['img_url']['name'])) {
         return 'Загрузите картинку';
     }
 
-    $tmpName = $files['img_url']['tmp_name'];
+    $tmpName = $_FILES['img_url']['tmp_name'];
     $fileType = mime_content_type($tmpName);
 
     if ($fileType !== 'image/png' && $fileType !== 'image/jpeg') {
@@ -248,18 +249,16 @@ function addUser(mysqli $link, array $registration): bool {
 }
 
 function validateEmail(mysqli $link, array $registration): string {
-    $email = $registration['email'];
+    $email = mysqli_real_escape_string($link, $registration['email']);
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
          return 'Некорректный e-mail';
     }
 
     $sql = "SELECT email FROM user WHERE email = '" . $email . "'";
-    $result = mysqli_query($link, $sql);
+    mysqli_query($link, $sql);
     if ($result) {
-        if (!empty(mysqli_fetch_all($result, MYSQLI_ASSOC))) {
-            return 'Данный e-mail занят';
-        }
-        return '';
+        $result = mysqli_fetch_all($result, MYSQLI_ASSOC);
+        return !empty($result) ? 'Данный e-mail занят' : '';
     } else {
         print("Error MySQL: " . mysqli_error($link));
         die();
@@ -280,4 +279,72 @@ function validateFormSignUp(mysqli $link, array $registration): array {
     return $errors;
 }
 
+function getUserDb(mysqli $link, string $email): mixed {
+	$sql = "SELECT * FROM user WHERE email = ?";
+    $stmt = mysqli_prepare($link, $sql);
+    mysqli_stmt_bind_param($stmt, 's', $email);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    $user = mysqli_fetch_array($result, MYSQLI_ASSOC);
+
+    return $result && !empty($user) ? $user : null;
+}
+
+function validateFormLogin(mysqli $link, array $login, mixed $user): array {
+    $requiredFields = ['email', 'password'];
+
+    $errors = [];
+    foreach ($login as $key => $value) {
+        if (in_array($key, $requiredFields) && empty($value)) {
+            $errors[$key] = 'Поле надо заполнить';
+        }
+    }
+
+    if (!$user && empty($errors['email'])) {
+		    $errors['email'] = 'Такой пользователь не найден';
+	}
+
+    return $errors;
+}
+
+function checkSessionName(): string {
+    return !empty($_SESSION) ? $_SESSION['user']['name'] : '';
+}
+
+function errorPage(array $sqlCategories, string $userName): void{
+    $pageContent = include_template('403.php', ['sqlCategories' => $sqlCategories,]);
+
+    $layoutContent = include_template('layout.php', [
+        'content' => $pageContent,
+        'categories' => $sqlCategories,
+        'title' => 'Доступ запрещен',
+        'userName' => $userName,
+    ]);
+
+    print($layoutContent);
+    exit();
+}
+
+function notFound(array $sqlCategories, string $userName): void{
+    $pageContent = include_template('404.php', ['sqlCategories' => $sqlCategories,]);
+
+    $layoutContent = include_template('layout.php', [
+        'content' => $pageContent,
+        'categories' => $sqlCategories,
+        'title' => 'Страница не найдена',
+        'userName' => $userName,
+    ]);
+
+    print($layoutContent);
+    exit();
+}
+
+function checkPassword(array $login, array $user): string {
+    if (password_verify($login['password'], $user['password'])) {
+			$_SESSION['user'] = $user;
+            header('Location: /');
+            exit();
+	} 
+	return 'Вы ввели неверный пароль';
+}
 ?>

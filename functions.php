@@ -255,7 +255,7 @@ function validateEmail(mysqli $link, array $registration): string {
     }
 
     $sql = "SELECT email FROM user WHERE email = '" . $email . "'";
-    mysqli_query($link, $sql);
+    $result = mysqli_query($link, $sql);
     if ($result) {
         $result = mysqli_fetch_all($result, MYSQLI_ASSOC);
         return !empty($result) ? 'Данный e-mail занят' : '';
@@ -325,7 +325,7 @@ function errorPage(array $sqlCategories, string $userName): void{
     exit();
 }
 
-function notFound(array $sqlCategories, string $userName): void{
+function notFoundPage(array $sqlCategories, string $userName): void{
     $pageContent = include_template('404.php', ['sqlCategories' => $sqlCategories,]);
 
     $layoutContent = include_template('layout.php', [

@@ -30,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($result) {
             header("Location: login.php");
         } else {
-            notFound($sqlCategories, $userName);
+            notFoundPage($sqlCategories, $userName);
         }
     }
 

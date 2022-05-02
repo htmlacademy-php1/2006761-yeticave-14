@@ -113,14 +113,14 @@ function getPostVal(mixed $val): ?string {
 function addLot(mysqli $link, array $lot): bool {
     $lot['finished_at'] = date("Y-m-d H:i:s", strtotime($lot['finished_at']));
     $lot['img_url'] = uploadFile();
-    $id = $_SESSION['user']['id'];
-    
-    $sql = "INSERT INTO lot
-            (user_id, name, category_id, description, start_price, step_price, finished_at, img_url)
-            VALUES (".$id.", ?, ?, ?, ?, ?, ?, ?)";
+    $lot['user_id'] = $_SESSION['user']['id'];
+
+    $sql = 'INSERT INTO lot
+            (name, category_id, description, start_price, step_price, finished_at, img_url, user_id)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
 
     $stmt = db_get_prepare_stmt($link, $sql, $lot);
-
+   
     return mysqli_stmt_execute($stmt);
 }
 

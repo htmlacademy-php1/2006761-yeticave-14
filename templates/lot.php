@@ -1,10 +1,10 @@
 <nav class="nav">
     <ul class="nav__list container">
-    <?foreach($sqlCategories as $value):?>
+    <?php foreach($sqlCategories as $value):?>
         <li class="nav__item">
             <a href="all-lots.html"><?=$value['name'] ?></a>
         </li>
-    <?endforeach;?>
+    <?php endforeach;?>
     </ul>
 </nav>
 <section class="lot-item container">
@@ -18,6 +18,7 @@
         <p class="lot-item__description"><?=htmlspecialchars($sqlCatLot['description']) ?></p>
     </div>
     <div class="lot-item__right">
+        <?php if (!empty($userName)): ?>
         <div class="lot-item__state">
         <div class="lot-item__timer timer  <?=oneHourTimerFinishing($sqlCatLot['finished_at']); ?>">
             <?=formatTimer($sqlCatLot['finished_at']); ?>
@@ -43,15 +44,16 @@
         <div class="history">
         <h3>История ставок (<span><?=count($sqlBidUser); ?></span>)</h3>
         <table class="history__list">
-            <?foreach($sqlBidUser as $value): ?>
+            <?php foreach($sqlBidUser as $value): ?>
             <tr class="history__item">
             <td class="history__name"><?=$value['user_name'] ?></td>
             <td class="history__price"><?=priceModify($value['price']); ?></td>
             <td class="history__time"><?=$value['created_at'] ?></td>
             </tr>
-            <?endforeach; ?>
+            <?php endforeach; ?>
         </table>
         </div>
+        <?php endif; ?>
     </div>
     </div>
 </section>

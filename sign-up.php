@@ -1,10 +1,13 @@
 <?php
-require_once('helpers.php');
-require_once('functions.php');
-require_once('data.php');
-require_once('init.php');
+
+require_once('boot.php');
 
 $sqlCategories = getCategories($link);
+$userName = getSessionName();
+
+if (!empty($userName)) {
+    errorPage($sqlCategories, $userName);
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
@@ -22,14 +25,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $errors = array_filter($errors);
 
     if (empty($errors)) {
-        $registration['password'] = password_hash($password, PASSWORD_DEFAULT);
+        $registration['password'] = password_hash($registration['password'], PASSWORD_DEFAULT);
         $result = addUser($link, $registration);
         if ($result) {
-            header("Location: templates/login.php");
+            header("Location: login.php");
         } else {
-            print(include_template('404.php', [
-            ]));
-            exit();
+            notFoundPage($sqlCategories, $userName);
         }
     }
 
@@ -41,9 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $layoutContent = include_template('layout.php', [
         'categories' => $sqlCategories,
         'content' => $pageContent,
-        'title' => $title,
-        'user_name' => $user_name,
-        'is_auth' => $is_auth,
+        'title' => 'Страница регистрации',
     ]);
 
     print($layoutContent);
@@ -56,9 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $layoutContent = include_template('layout.php', [
         'categories' => $sqlCategories,
         'content' => $pageContent,
-        'title' => $title,
-        'user_name' => $user_name,
-        'is_auth' => $is_auth,
+        'title' => 'Страница регистрации',
     ]);
 
     print($layoutContent);

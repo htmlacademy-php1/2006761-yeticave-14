@@ -1,9 +1,8 @@
 <?php
-require_once('helpers.php');
-require_once('functions.php');
-require_once('data.php');
-require_once('init.php');
 
+require_once('boot.php');
+
+$userName = getSessionName();
 $lotId = intval($_GET['ID']);
 
 $sqlCategories = getCategories($link);
@@ -17,14 +16,15 @@ $pageContent = include_template('lot.php', [
     'sqlCategories' => $sqlCategories,
     'sqlCatLot' => $sqlCatLot,
     'sqlBidUser' => $sqlBidUser,
+    'userName' => $userName,
+
 ]);
 
 $layoutContent = include_template('layout.php', [
     'categories' => $sqlCategories,
     'content' => $pageContent,
-    'title' => $title,
-    'user_name' => $user_name,
-    'is_auth' => $is_auth,
+    'title' => 'Страница лота',
+    'userName' => $userName,
 ]);
 
 print($layoutContent);

@@ -8,5 +8,5 @@
         </ul>
     </nav>
     <section class="lot-item container">
-        <h2>404 Страница не найдена</h2>
+        <h2>HTTP-код ответа 403</h2>
     </section>

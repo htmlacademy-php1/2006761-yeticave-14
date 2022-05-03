@@ -3,7 +3,7 @@
 require_once('boot.php');
 
 $sqlCategories = getCategories($link);
-$userName = checkSessionName();
+$userName = getSessionName();
 
 if (!empty($userName)) {
     errorPage($sqlCategories, $userName);

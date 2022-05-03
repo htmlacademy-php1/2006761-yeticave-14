@@ -2,7 +2,7 @@
 
 require_once('boot.php');
 
-$userName = checkSessionName();
+$userName = getSessionName();
 $lotId = intval($_GET['ID']);
 
 $sqlCategories = getCategories($link);

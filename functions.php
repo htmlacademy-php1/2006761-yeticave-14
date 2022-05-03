@@ -110,9 +110,9 @@ function getPostVal(mixed $val): ?string {
     return $_POST[$val] ?? '';
 }
 
-function addLot(mysqli $link, array $lot): bool {
+function addLot(mysqli $link, array $lot, array $files): bool {
     $lot['finished_at'] = date("Y-m-d H:i:s", strtotime($lot['finished_at']));
-    $lot['img_url'] = uploadFile();
+    $lot['img_url'] = uploadFile($files);
     $lot['user_id'] = $_SESSION['user']['id'];
 
     $sql = 'INSERT INTO lot
@@ -124,8 +124,8 @@ function addLot(mysqli $link, array $lot): bool {
     return mysqli_stmt_execute($stmt);
 }
 
-function uploadFile(): string {
-    $tmpName = $_FILES['img_url']['tmp_name'];
+function uploadFile(array $files): string {
+    $tmpName = $files['img_url']['tmp_name'];
     $fileType = mime_content_type($tmpName);
 
     switch($fileType) {
@@ -142,7 +142,7 @@ function uploadFile(): string {
     return 'uploads/' . $fileName;
 }
 
-function validateFormLot(array $lot, array $categoriesId): array {
+function validateFormLot(array $lot, array $categoriesId, $files): array {
     $requiredFields = ['name', 'category_id', 'description', 'start_price', 'step_price', 'finished_at'];
 
     $rules = [
@@ -174,7 +174,7 @@ function validateFormLot(array $lot, array $categoriesId): array {
         }
     }
 
-    $errors['img_url'] = validateImg();
+    $errors['img_url'] = validateImg($files);
 
     return $errors;
 }
@@ -226,13 +226,13 @@ function getDateRange(string $finishedAt, string $now): array {
     return [$hours, $minutes];
 }
 
-function validateImg(): string {
+function validateImg(array $files): string {
 
-    if (empty($_FILES['img_url']['name'])) {
+    if (empty($files['img_url']['name'])) {
         return 'Загрузите картинку';
     }
 
-    $tmpName = $_FILES['img_url']['tmp_name'];
+    $tmpName = $files['img_url']['tmp_name'];
     $fileType = mime_content_type($tmpName);
 
     if ($fileType !== 'image/png' && $fileType !== 'image/jpeg') {
@@ -279,7 +279,7 @@ function validateFormSignUp(mysqli $link, array $registration): array {
     return $errors;
 }
 
-function getUserDb(mysqli $link, string $email): mixed {
+function getUserDb(mysqli $link, string $email): array {
 	$sql = "SELECT * FROM user WHERE email = ?";
     $stmt = mysqli_prepare($link, $sql);
     mysqli_stmt_bind_param($stmt, 's', $email);
@@ -287,7 +287,7 @@ function getUserDb(mysqli $link, string $email): mixed {
     $result = mysqli_stmt_get_result($stmt);
     $user = mysqli_fetch_array($result, MYSQLI_ASSOC);
 
-    return $result && !empty($user) ? $user : null;
+    return $result && !empty($user) ? $user : [];
 }
 
 function validateFormLogin(mysqli $link, array $login, mixed $user): array {
@@ -307,8 +307,8 @@ function validateFormLogin(mysqli $link, array $login, mixed $user): array {
     return $errors;
 }
 
-function checkSessionName(): string {
-    return !empty($_SESSION) ? $_SESSION['user']['name'] : '';
+function getSessionName(): string {
+    return $_SESSION['user']['name'] ?? '';
 }
 
 function errorPage(array $sqlCategories, string $userName): void{
@@ -339,12 +339,7 @@ function notFoundPage(array $sqlCategories, string $userName): void{
     exit();
 }
 
-function checkPassword(array $login, array $user): string {
-    if (password_verify($login['password'], $user['password'])) {
-			$_SESSION['user'] = $user;
-            header('Location: /');
-            exit();
-	} 
-	return 'Вы ввели неверный пароль';
+function checkPassword(array $login, array $user): bool {
+    return password_verify($login['password'], $user['password']) ? true : false;
 }
 ?>

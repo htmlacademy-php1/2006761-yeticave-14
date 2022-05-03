@@ -3,7 +3,7 @@
 require_once('boot.php');
 
 $sqlCategories = getCategories($link);
-$userName = checkSessionName();
+$userName = getSessionName();
 if (empty($userName)) {
     errorPage($sqlCategories, $userName);
 }
@@ -21,13 +21,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     ], true);
 
     $categoriesId = array_column($sqlCategories, 'id');
-    $errors = validateFormLot($lot, $categoriesId);
+    $errors = validateFormLot($lot, $categoriesId, $_FILES);
 
     //Удаляем все null значения
     $errors = array_filter($errors);
 
     if (empty($errors)) {
-        if (addLot($link, $lot)) {
+        if (addLot($link, $lot, $_FILES)) {
             $lotId = mysqli_insert_id($link);
             header("Location: lot.php?ID=" . $lotId);
         } else {

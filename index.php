@@ -6,7 +6,7 @@ require_once('boot.php');
 
     $sqlPosters = getPosters($link);
 
-    $userName = checkSessionName();
+    $userName = getSessionName();
 
     $pageContent = include_template('main.php', [
         'categories' => $sqlCategories,

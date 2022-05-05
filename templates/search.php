@@ -10,13 +10,10 @@
         </ul>
     </nav>
     <div class="container">
-
         <section class="lots">
-
             <div class="lots__header">
                 <h2><?=empty($search) ? 'Пустой запрос' : 'Результаты поиска по запросу: '?><span><?= $search; ?></span></h2>
             </div>
-
             <?php if (isset($searchResult)): ?>
             <ul class="lots__list">
                 <!--заполните этот список из массива с товарами-->
@@ -44,9 +41,7 @@
                 <?php endforeach; ?>
             </ul>
             <?php endif;?>
-
         </section>
-
         <?php if(isset($pagination['countPage']) && $pagination['countPage'] > 1):?>
         <ul class="pagination-list">
             <li class="pagination-item pagination-item-prev">
@@ -59,17 +54,15 @@
                 </li>
                 <?php else:?>
                 <li class="pagination-item">
-                    <a href="/search.php?search=<?=htmlspecialchars($search) . '&page=' . $value?>"><?=$value?></a>
+                    <a href="<?='/search.php?search=' . htmlspecialchars($search) . '&page=' . $value?>"><?=$value?></a>
                 </li>
                 <?php endif;?>
             <?php endforeach;?>
             <li class="pagination-item pagination-item-next">
-                <a href="<?='/search.php?search='.htmlspecialchars($search).'&page='.$pagination['nextPage']?>">Вперед</a>
+                <a href="<?='/search.php?search=' . htmlspecialchars($search) . '&page=' . $pagination['nextPage']?>">Вперед</a>
             </li>
         </ul>
         <?php endif;?>
-
     </div>
   </main>
-
 </div>

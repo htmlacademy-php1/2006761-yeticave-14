@@ -13,7 +13,7 @@ function formatTimer(string $date): string {
     $secDifference = $dateFinish - time();
     $hours = floor($secDifference / 3600);
     $minutes = floor(($secDifference % 3600) / 60);
-    
+
     return "{$hours}:{$minutes}";
 }
 

@@ -14,7 +14,7 @@
         <section class="lots">
 
             <div class="lots__header">
-                <h2><?=empty($search) ? '«Пустой запрос' : 'Результаты поиска по запросу «'?><span><?= $search; ?></span>»</h2>
+                <h2><?=empty($search) ? 'Пустой запрос' : 'Результаты поиска по запросу: '?><span><?= $search; ?></span></h2>
             </div>
 
             <?php if (isset($searchResult)): ?>

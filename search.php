@@ -27,21 +27,21 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET' || empty(trim($_GET['search']))) { //П
     exit();
 }
 
-$currentPage = intval($_GET['page'] ?? 1);
+$currentPage = (int)($_GET['page'] ?? 1);
 
-$lotLimit = 9; //Кол-во лотов на странице
-$offset = $lotLimit * ($currentPage - 1); //Смещение для запроса к БД
+const LOT_LIMIT = 9; //Кол-во лотов на странице
+$offset = LOT_LIMIT * ($currentPage - 1); //Смещение для запроса к БД
 
 $search = trim(filter_input(INPUT_GET, 'search')); //Получаем значение поиска от пользователя
 $search = mysqli_real_escape_string($link, $search);
 
-if (empty($searchResult = getLotBySearch($link, $search, $lotLimit, $offset))) {
+if (empty($searchResult = getLotBySearch($link, $search, LOT_LIMIT, $offset))) {
     $search = 'Ничего не найдено';
 }
 
 $countLotFromSearch = getCountLotBySearch($link, $search); //Получаем кол-во найденных лотов
 
-$pagination = createPagination($currentPage, $countLotFromSearch, $lotLimit); //Создаем пагинацию
+$pagination = createPagination($currentPage, $countLotFromSearch, LOT_LIMIT); //Создаем пагинацию
 
 $pageContent = include_template('search.php', [
     'sqlCategories' => $sqlCategories,

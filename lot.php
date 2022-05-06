@@ -3,7 +3,7 @@
 require_once('boot.php');
 
 $userName = getSessionName();
-$lotId = intval($_GET['ID']);
+$lotId = (int)($_GET['ID']);
 
 $sqlCategories = getCategories($link);
 

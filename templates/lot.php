@@ -32,8 +32,9 @@
             Мин. ставка <span><?=priceModify($minPrice = ($minPrice===$sqlCatLot['start_price'])? $minPrice + $sqlCatLot['step_price'] : $sqlCatLot['max_price'] + $sqlCatLot['step_price']) ?></span>
             </div>
         </div>
-        <form class="lot-item__form" action="https://echo.htmlacademy.ru" method="post" autocomplete="off">
-            <p class="lot-item__form-item form__item form__item--invalid">
+        <form class="lot-item__form" action="lot.php" method="post" autocomplete="off">
+        <?php $className = isset($errors['name']) ? 'form__item--invalid' : '' ?>
+            <p class="lot-item__form-item form__item <?=$className; ?>">
             <label for="cost">Ваша ставка</label>
             <input id="cost" type="text" name="cost" placeholder="<?=priceModify($minPrice); ?>">
             <span class="form__error">Введите наименование лота</span>

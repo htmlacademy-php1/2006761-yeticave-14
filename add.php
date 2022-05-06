@@ -9,7 +9,6 @@ if (empty($userName)) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
     //Получаем значения из формы
     $lot = filter_input_array(INPUT_POST, [
         'name' => FILTER_DEFAULT,

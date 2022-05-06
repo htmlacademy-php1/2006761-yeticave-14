@@ -340,6 +340,48 @@ function notFoundPage(array $sqlCategories, string $userName): void{
 }
 
 function checkPassword(array $login, array $user): bool {
-    return password_verify($login['password'], $user['password']) ? true : false;
+    return password_verify($login['password'], $user['password']);
 }
+
+function getLotBySearch(mysqli $link, string $search, int $limit, int $offset): array {
+    $sql = "SELECT l.id, l.name AS lot_name, l.description, l.start_price, l.img_url, l.finished_at, c.name AS cat_name
+            FROM lot l
+            JOIN category c ON l.category_id = c.id
+            WHERE  MATCH(l.name, l.description) AGAINST(? IN BOOLEAN MODE) ORDER BY l.created_at LIMIT ".$limit." OFFSET ".$offset."";
+
+    $stmt = db_get_prepare_stmt($link, $sql, [$search]);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    return mysqli_fetch_all($result, MYSQLI_ASSOC);
+}
+
+function getCountLotBySearch(mysqli $link, string $search): int {
+
+    $sql = 'SELECT l.id, l.name AS lot_name, l.description, l.start_price, l.img_url, l.finished_at, c.name AS cat_name
+            FROM lot l
+            JOIN category c ON l.category_id = c.id
+            WHERE  MATCH(l.name, l.description) AGAINST(? IN BOOLEAN MODE)';
+
+    $stmt = db_get_prepare_stmt($link, $sql, [$search]);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    return count(mysqli_fetch_all($result, MYSQLI_ASSOC));
+}
+
+function createPagination(int $current, int $countLot, int $limit): array {
+  $countPage = (int)ceil($countLot/$limit); //Получаем кол-во страниц
+  $pages = range(1, $countPage); //Создаём массив страниц
+
+  $prev = ($current > 1) ? $current - 1 : $current;
+  $next = ($current < $countPage) ? $current + 1 : $current;
+
+  return ['prevPage' => $prev,
+          'nextPage' => $next,
+          'countPage' => $countPage,
+          'pages' => $pages,
+          'currentPage' => $current,
+          'lotLimit' => $limit
+         ];
+}
+
 ?>

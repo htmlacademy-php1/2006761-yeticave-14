@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     ], true);
 
     $categoriesId = array_column($sqlCategories, 'id');
-    $errors = validateFormLot($lot, $categoriesId, $_FILES);
+    $errors = validateFormAdd($lot, $categoriesId, $_FILES);
 
     //Удаляем все null значения
     $errors = array_filter($errors);

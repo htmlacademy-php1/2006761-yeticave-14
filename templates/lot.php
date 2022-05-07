@@ -26,18 +26,19 @@
         <div class="lot-item__cost-state">
             <div class="lot-item__rate">
             <span class="lot-item__amount">Текущая цена</span>
-            <span class="lot-item__cost"><?=priceModify($minPrice = ((count($sqlBidUser)===0)? $sqlCatLot['start_price'] : $sqlCatLot['max_price'])) ?></span>
+            <span class="lot-item__cost"><?=priceModify($price['currentPrice']); ?></span>
             </div>
             <div class="lot-item__min-cost">
-            Мин. ставка <span><?=priceModify($minPrice = ($minPrice===$sqlCatLot['start_price'])? $minPrice + $sqlCatLot['step_price'] : $sqlCatLot['max_price'] + $sqlCatLot['step_price']) ?></span>
+            Мин. ставка <span><?=priceModify($price['minBid']); ?></span>
             </div>
         </div>
-        <form class="lot-item__form" action="lot.php" method="post" autocomplete="off">
-        <?php $className = isset($errors['name']) ? 'form__item--invalid' : '' ?>
+        
+        <form class="lot-item__form " action="/lot.php?ID=<?=$lotId?>" method="post" autocomplete="off">
+            <?php $className = !empty($errors) ? 'form__item--invalid' : '' ?>
             <p class="lot-item__form-item form__item <?=$className; ?>">
             <label for="cost">Ваша ставка</label>
-            <input id="cost" type="text" name="cost" placeholder="<?=priceModify($minPrice); ?>">
-            <span class="form__error">Введите наименование лота</span>
+            <input id="cost" type="text" name="cost" placeholder="<?=priceModify($price['minBid']); ?>">
+            <span class="form__error"><?=isset($errors) ? $errors : '' ?></span>
             </p>
             <button type="submit" class="button">Сделать ставку</button>
         </form>

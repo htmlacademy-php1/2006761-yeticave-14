@@ -5,8 +5,9 @@ require_once('boot.php');
 $sqlCategories = getCategories($link);
 $userName = getSessionName();
 
-$sqlActiveBid = getActiveBid($link) //актуальные ставки
+$sqlActiveBid = getActiveBid($link); //актуальные ставки
 $sqlActiveBid = getTime($sqlActiveBid);
+
 
 $sqlFinishedBid = getFinishedBid($link); //торги закончены проигрышем
 $sqlFinishedBid = getTime($sqlFinishedBid);

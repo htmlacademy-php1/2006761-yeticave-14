@@ -5,7 +5,6 @@ const LOT_LIMIT = 9; //Кол-во лотов на странице
 require_once('boot.php');
 
 $sqlCategories = getCategories($link);
-//$sqlPosters = getPosters($link);
 $userName = getSessionName();
 
 if ($_SERVER['REQUEST_METHOD'] !== 'GET' || empty(trim($_GET['search']))) { //Проверяем, что была отправлена форма и получившаяся строка не пустая.
@@ -46,7 +45,6 @@ $pagination = createPagination($currentPage, $countLotFromSearch, LOT_LIMIT); //
 
 $pageContent = include_template('search.php', [
     'sqlCategories' => $sqlCategories,
-    //'posters' => $sqlPosters,
     'search' => $search,
     'searchResult'=> $searchResult,
     'pagination' => $pagination,

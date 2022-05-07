@@ -6,7 +6,7 @@ $sqlCategories = getCategories($link);
 $userName = getSessionName();
 $errors = '';
 
-$lotId = (int)($_GET['ID']);
+$lotId = (int)$_GET['ID'];
 
 $sqlCatLot = getCatLotMaxPrice($link, $lotId);
 if (checkExistDbVal($sqlCatLot)) {

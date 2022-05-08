@@ -1,0 +1,13 @@
+{
+    "name": "yeticave/ink",
+    "description": "yeticave",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Aleksandr Gerashchenkov",
+            "email": "oneg.m@yandex.ru"
+        }
+    ],
+    "require": {}
+}

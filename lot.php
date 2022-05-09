@@ -29,7 +29,7 @@ $sqlBidUser = getBidUser($link, $lotId);
 
 $price = getPrice($sqlBidUser, $sqlCatLot);
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') { 
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($userName)) {     //Проверка, что пользователь залогинен.
         header("Location: login.php");
         exit();
@@ -38,12 +38,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $errors = validateFormLot($userPrice, $price);
 
-    if(empty($errors)) {
-       if (!$res = addBid($link, $lotId, $userPrice)) {
-           print("Error MySQL: " . $error);
-           exit;
-       }
-       header("Location: /lot.php?ID=".$lotId."");
+    if (empty($errors)) {
+        if (!$res = addBid($link, $lotId, $userPrice)) {
+            print("Error MySQL: " . $error);
+            exit;
+        }
+        header("Location: /lot.php?ID={$lotId}");
     }
 }
 $pageContent = include_template('lot.php', [
@@ -62,6 +62,7 @@ $layoutContent = include_template('layout.php', [
     'content' => $pageContent,
     'title' => 'Страница лота',
     'userName' => $userName,
+    'sqlCatLot' => $sqlCatLot,
 ]);
 
 print($layoutContent);

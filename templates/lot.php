@@ -1,7 +1,7 @@
 <nav class="nav">
     <ul class="nav__list container">
-    <?php foreach($sqlCategories as $value):?>
-        <li class="nav__item">
+    <?php foreach ($sqlCategories as $value):?>
+        <li class="nav__item <?=$value['symbol_code'] === $sqlCatLot['symbol_code'] ? 'nav__item--current' : '' ?>">
             <a href="all-lots.html"><?=$value['name'] ?></a>
         </li>
     <?php endforeach;?>
@@ -46,7 +46,7 @@
         <div class="history">
         <h3>История ставок (<span><?=count($sqlBidUser); ?></span>)</h3>
         <table class="history__list">
-            <?php foreach($sqlBidUser as $value): ?>
+            <?php foreach ($sqlBidUser as $value): ?>
             <tr class="history__item">
             <td class="history__name"><?=$value['user_name'] ?></td>
             <td class="history__price"><?=priceModify($value['price']); ?></td>

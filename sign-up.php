@@ -46,7 +46,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     ]);
 
     print($layoutContent);
-
 } else {
     $pageContent = include_template('sign-up.php', [
         'sqlCategories' => $sqlCategories,

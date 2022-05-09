@@ -5,7 +5,6 @@ require_once('boot.php');
 $sqlCategories = getCategories($link);
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-
     $pageContent = include_template('login.php', [
         'sqlCategories' => $sqlCategories,
     ]);

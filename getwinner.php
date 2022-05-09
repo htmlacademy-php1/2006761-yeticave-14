@@ -9,37 +9,35 @@ require_once 'boot.php';
 $dsn = 'smtp://a01042aa5c584b:b117676541b9f6@smtp.mailtrap.io:2525';
 $transport = Transport::fromDsn($dsn);
 
+// Список последних ставок по лотам без победителей, дата истечения которых меньше или равна текущей дате
 $sqlLotList = getLotWithoutWinner($link);
 
-$sqlLastBid = [];
+// Проверка на истечение срока размещения лотов
+if (!empty($sqlLotList)) {
+    // Список пользователей победителей по последним ставкам
+    foreach ($sqlLotList as $value) {
+        $sqlLastBid = getLastBid($link, $value['lot_id']);
+    }
 
-foreach ($sqlLotList as $value) {
-    $sqlLastBid[] = getLastBid($link, $value['lot_id']);
-}
-$sqlLastBid = array_filter($sqlLastBid);
+    $sqlLastBid = array_filter($sqlLastBid);
 
+    // Записываем в лот победителем автора последней ставки
+    foreach ($sqlLastBid as $value) {
+        updateWinner($link, $value['user_id'], $value['lot_id']);
+    }
 
-foreach ($sqlLastBid as $value) {
+    $mailer = new Mailer($transport);
+    $message = new Email();
+    $message->subject("Ваша ставка победила");
+    $message->from("keks@phpdemo.ru");
 
-    updateWinner($link, $value['user_id'], $value['lot_id']);
-}
+    $winners = getWinner($link);
 
-$winners = getWinner($link);
-
-$mailer = new Mailer($transport);
-$message = new Email();
-$message->subject("Ваша ставка победила");
-$message->from("keks@phpdemo.ru");
-
-foreach ($winners as $value) {
-    $message->to($value['email']);
-    $msgContent = include_template('email.php', ['winner' => $value]);
-    $message->html($msgContent);
-    try {
+    // Отправка победителям на email письмо с поздравлением
+    foreach ($winners as $value) {
+        $message->to($value['email']);
+        $msgContent = include_template('email.php', ['winner' => $value]);
+        $message->html($msgContent);
         $mailer->send($message);
-    } catch (Exception $e) {
-        echo $e->getMessage();
-    } catch (\Symfony\Component\Mailer\Exception\TransportExceptionInterface $e) {
-        echo $e->getMessage();
     }
 }

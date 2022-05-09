@@ -30,8 +30,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $lotId = mysqli_insert_id($link);
             header("Location: lot.php?ID=" . $lotId);
         } else {
-        print("Error MySQL: " . mysqli_error($link));
-        exit();
+            print("Error MySQL: " . mysqli_error($link));
+            exit();
         }
     }
 
@@ -48,7 +48,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     ]);
 
     print($layoutContent);
-
 } else {
     $pageContent = include_template('add.php', [
         'sqlCategories' => $sqlCategories,
@@ -63,5 +62,3 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     print($layoutContent);
 }
-
-

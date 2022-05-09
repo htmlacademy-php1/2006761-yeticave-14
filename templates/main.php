@@ -5,7 +5,7 @@
             <!--заполните этот список из массива категорий-->
             <?php foreach ($categories as $value): ?>
             <li class="promo__item promo__item--<?=$value['symbol_code'] ?>">
-                <a class="promo__link" href="pages/all-lots.html"><?=htmlspecialchars($value['name']); ?></a>
+                <a class="promo__link" href="all-lots.php?categoryName=<?=$value['symbol_code']?>"><?=htmlspecialchars($value['name']); ?></a>
             </li>
             <?php endforeach; ?>
         </ul>
@@ -16,7 +16,7 @@
         </div>
         <ul class="lots__list">
             <!--заполните этот список из массива с товарами-->
-            <?php foreach($posters as $value): ?>
+            <?php foreach ($posters as $value): ?>
             <li class="lots__item lot">
                 <div class="lot__image">
                     <img src="<?=$value['img_url']; ?>" width="350" height="260" alt="">

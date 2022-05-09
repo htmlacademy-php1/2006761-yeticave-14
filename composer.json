@@ -9,5 +9,8 @@
             "email": "oneg.m@yandex.ru"
         }
     ],
-    "require": {}
+    "require": {
+        "symfony/mailer": "^6.0",
+        "friendsofphp/php-cs-fixer": "^3.8"
+    }
 }

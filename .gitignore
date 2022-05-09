@@ -11,3 +11,4 @@ uploads/*
 !uploads/.gitkeep
 .vs
 img/*
+.php-cs-fixer.cache

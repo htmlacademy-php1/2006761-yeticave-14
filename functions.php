@@ -400,7 +400,7 @@ function validateFormLot(string $userPrice, array $price): string {
     }
 
     if ($userPrice <= $price['minBid']) { //Если меньше минимальной ставки
-        return "Должно быть не менее ".$price['minBid']."";
+        return 'Должно быть не менее '.$price['minBid'].'';
     }
     return '';
 }
@@ -425,7 +425,7 @@ function addBid(mysqli $link, int $lotId, int $userPrice): bool {
 function getActiveBid(mysqli $link): array|null {
     $userId = $_SESSION['user']['id'];
 
-    $sql = "SELECT  l.id AS lot_id, l.name AS lot_name, l.img_url, l.finished_at,
+    $sql = 'SELECT  l.id AS lot_id, l.name AS lot_name, l.img_url, l.finished_at,
                     b.user_id, MAX(b.price) AS price, b.created_at,
 		            c.name AS cat_name
             FROM bid b
@@ -433,9 +433,13 @@ function getActiveBid(mysqli $link): array|null {
             JOIN user u ON u.id = b.user_id
             JOIN category c ON c.id = l.category_id
             GROUP BY b.lot_id, b.user_id, b.created_at, l.winner_id
-            HAVING b.user_id = ".$userId." AND finished_at > NOW() AND l.winner_id IS NULL
-            ORDER BY created_at DESC";
-    $result = mysqli_query($link, $sql);
+            HAVING b.user_id = ? AND finished_at > NOW() AND l.winner_id IS NULL
+            ORDER BY created_at DESC';
+
+    $stmt = mysqli_prepare($link, $sql);
+    mysqli_stmt_bind_param($stmt, 'i', $userId);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
 
     if ($result) {
         return mysqli_fetch_all($result, MYSQLI_ASSOC);
@@ -449,7 +453,7 @@ function getActiveBid(mysqli $link): array|null {
 function getFinishedBid(mysqli $link): array {
     $userId = $_SESSION['user']['id'];
 
-    $sql = "SELECT  l.id AS lot_id, l.name AS lot_name, l.img_url, l.finished_at,
+    $sql = 'SELECT  l.id AS lot_id, l.name AS lot_name, l.img_url, l.finished_at,
                     b.user_id, MAX(b.price) AS price, b.created_at,
 		            c.name AS cat_name
             FROM bid b
@@ -457,9 +461,13 @@ function getFinishedBid(mysqli $link): array {
             JOIN user u ON u.id = b.user_id
             JOIN category c ON c.id = l.category_id
             GROUP BY b.lot_id, b.user_id, l.winner_id, b.created_at
-            HAVING b.user_id = ".$userId." AND l.winner_id != ".$userId."
-            ORDER BY l.finished_at DESC";
-    $result = mysqli_query($link, $sql);
+            HAVING b.user_id = ? AND l.winner_id != ? AND l.finished_at < NOW()
+            ORDER BY l.finished_at DESC';
+
+    $stmt = mysqli_prepare($link, $sql);
+    mysqli_stmt_bind_param($stmt, 'ii', $userId, $userId);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
 
     if ($result) {
         return mysqli_fetch_all($result, MYSQLI_ASSOC);
@@ -473,7 +481,7 @@ function getFinishedBid(mysqli $link): array {
 function getWinnerBid(mysqli $link): array {
     $userId = $_SESSION['user']['id'];
 
-    $sql = "SELECT  l.id AS lot_id, l.name AS lot_name, l.img_url, l.finished_at,
+    $sql = 'SELECT  l.id AS lot_id, l.name AS lot_name, l.img_url, l.finished_at,
                     b.user_id, MAX(b.price) AS price, b.created_at,
 		            c.name AS cat_name,
                     u.contacts
@@ -482,9 +490,13 @@ function getWinnerBid(mysqli $link): array {
             JOIN user u ON u.id = b.user_id
             JOIN category c ON c.id = l.category_id
             GROUP BY b.lot_id, b.user_id, l.winner_id, b.created_at
-            HAVING b.user_id = ".$userId." AND l.winner_id = ".$userId."
-            ORDER BY l.finished_at DESC";
-    $result = mysqli_query($link, $sql);
+            HAVING b.user_id = ? AND l.winner_id = ?
+            ORDER BY l.finished_at DESC';
+
+    $stmt = mysqli_prepare($link, $sql);
+    mysqli_stmt_bind_param($stmt, 'ii', $userId, $userId);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
 
     if ($result) {
          return mysqli_fetch_all($result, MYSQLI_ASSOC);
@@ -508,13 +520,18 @@ function getLotWithoutWinner(mysqli $link): array {
     }
 }
 
-function getLastBid(mysqli $link, int $lotId): array|bool|null {
-    $sql = "SELECT u.id AS user_id, u.name AS user_name, b.price AS max_price, b.lot_id AS lot_id
+function getLastBid(mysqli $link, int $lotId): array {
+    $sql = 'SELECT u.id AS user_id, u.name AS user_name, b.price AS max_price, b.lot_id AS lot_id
             FROM bid b
             JOIN user u ON b.user_id = u.id
-            WHERE b.lot_id = ".$lotId."
-            ORDER BY b.price DESC LIMIT 1";
-    $result = mysqli_query($link, $sql);
+            WHERE b.lot_id = ?
+            ORDER BY b.price DESC LIMIT 1';
+
+    $stmt = mysqli_prepare($link, $sql);
+    mysqli_stmt_bind_param($stmt, 'i', $lotId);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+
     if ($result) {
         return mysqli_fetch_array($result, MYSQLI_ASSOC);
     } else {
@@ -523,18 +540,25 @@ function getLastBid(mysqli $link, int $lotId): array|bool|null {
     }
 }
 
-function updateWinner(mysqli $link, int $userId, int $lotId): mysqli_result|bool {
-    $sql = "UPDATE lot SET winner_id = ".$userId." WHERE id =".$lotId."";
-    return mysqli_query($link, $sql);
+function updateWinner(mysqli $link, int $userId, int $lotId): void {
+    $sql = 'UPDATE lot SET winner_id = ? WHERE id = ?';
+
+    $stmt = mysqli_prepare($link, $sql);
+    mysqli_stmt_bind_param($stmt, 'ii', $userId, $lotId);
+    $result = mysqli_stmt_execute($stmt);
+    if (!$result) {
+        print("Error: Запрос не выполнен" . mysqli_error($link));
+        exit();
+    } 
 }
 
-function getWinner(mysqli $link): bool|array {
-    $sql = "SELECT l.id AS lot_id, l.name, l.winner_id, u.name, u.email
+function getWinner(mysqli $link): array {
+    $sql = 'SELECT l.id AS lot_id, l.name, l.winner_id, u.name, u.email
             FROM lot l
             JOIN bid b ON l.winner_id = b.user_id
             JOIN user u ON b.user_id = u.id
             WHERE winner_id IS NOT NULL
-            GROUP BY l.id";
+            GROUP BY l.id';
     $result = mysqli_query($link, $sql);
     if ($result) {
         return mysqli_fetch_all($result, MYSQLI_ASSOC);
@@ -548,27 +572,33 @@ function getTime(array $sqlBid): array {
 
     foreach ($sqlBid as $value => $key) {
         $time = time() - strtotime($sqlBid[$value]['created_at']);
-        if ($time < 3600 ) {
-            $time = floor($time / 60);
-            $minuteWord = get_noun_plural_form($time, 'минута', 'минуты', 'минут');
-            $sqlBid[$value]['time'] = "{$time} {$minuteWord} назад";
-        } elseif ($time < 86400) {
-            $time = floor($time / 3600);
-            $minuteWord = get_noun_plural_form($time, 'час', 'часа', 'часов');
-            $sqlBid[$value]['time'] = "{$time} {$minuteWord} назад";
-        } elseif ($time < 2592000) {
-            $time = floor($time / 86400);
-            $minuteWord = get_noun_plural_form($time, 'день', 'дня', 'дней');
-            $sqlBid[$value]['time'] = "{$time} {$minuteWord} назад";
-        } elseif ($time < 5184000){
-            $time = floor($time / 2592000);
-            $minuteWord = get_noun_plural_form($time, 'месяц', 'месяца', 'месяцев');
-            $sqlBid[$value]['time'] = "{$time} {$minuteWord} назад";
-        } else {
-            $time = floor($time / 31104000);
-            $minuteWord = get_noun_plural_form($time, 'год', 'года', 'лет');
-            $sqlBid[$value]['time'] = "{$time} {$minuteWord} назад";
+        switch ($time) {
+            case ($time < 3600):
+                $time = floor($time / 60);
+                $minuteWord = get_noun_plural_form($time, 'минута', 'минуты', 'минут');
+                $sqlBid[$value]['time'] = "{$time} {$minuteWord} назад";
+                break;
+            case ($time < 86400):
+                $time = floor($time / 3600);
+                $minuteWord = get_noun_plural_form($time, 'час', 'часа', 'часов');
+                $sqlBid[$value]['time'] = "{$time} {$minuteWord} назад";
+            case ($time < 2592000):
+                $time = floor($time / 86400);
+                $minuteWord = get_noun_plural_form($time, 'день', 'дня', 'дней');
+                $sqlBid[$value]['time'] = "{$time} {$minuteWord} назад";
+                break;
+            case ($time < 5184000):
+                $time = floor($time / 2592000);
+                $minuteWord = get_noun_plural_form($time, 'месяц', 'месяца', 'месяцев');
+                $sqlBid[$value]['time'] = "{$time} {$minuteWord} назад";
+                break;
+            default:
+                $time = floor($time / 31104000);
+                $minuteWord = get_noun_plural_form($time, 'год', 'года', 'лет');
+                $sqlBid[$value]['time'] = "{$time} {$minuteWord} назад";
+                break;
         }
+        
     }
 
    return $sqlBid;

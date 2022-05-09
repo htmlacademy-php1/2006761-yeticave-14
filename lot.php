@@ -43,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
            print("Error MySQL: " . $error);
            exit;
        }
-       header("Location: /lot.php?ID=".$lotId."");
+       header("Location: /lot.php?ID={$lotId}");
     }
 }
 $pageContent = include_template('lot.php', [

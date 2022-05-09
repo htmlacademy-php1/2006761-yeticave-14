@@ -582,6 +582,7 @@ function getTime(array $sqlBid): array {
                 $time = floor($time / 3600);
                 $minuteWord = get_noun_plural_form($time, 'час', 'часа', 'часов');
                 $sqlBid[$value]['time'] = "{$time} {$minuteWord} назад";
+                break;
             case ($time < 2592000):
                 $time = floor($time / 86400);
                 $minuteWord = get_noun_plural_form($time, 'день', 'дня', 'дней');
@@ -596,7 +597,6 @@ function getTime(array $sqlBid): array {
                 $time = floor($time / 31104000);
                 $minuteWord = get_noun_plural_form($time, 'год', 'года', 'лет');
                 $sqlBid[$value]['time'] = "{$time} {$minuteWord} назад";
-                break;
         }
         
     }

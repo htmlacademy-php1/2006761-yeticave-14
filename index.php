@@ -1,15 +1,7 @@
 <?php
 
 require_once('boot.php');
-
-$sqlLotList = getLotWithoutWinner($link);
-
-foreach ($sqlLotList as $value) {
-    $sqlLastBid = getLastBid($link, $value['lot_id']);
-}
-if (!empty($sqlLastBid)) {
-    updateWinner($link, $sqlLastBid['user_id'], $sqlLastBid['lot_id']);
-}
+require_once('getwinner.php');
 
     $sqlCategories = getCategories($link);
 

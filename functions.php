@@ -509,14 +509,14 @@ function getLotWithoutWinner(mysqli $link): array {
 }
 
 function getLastBid(mysqli $link, int $lotId): array|bool|null {
-    $sql = "SELECT u.id AS user_id, u.name AS user_name, b.price AS max_price, b.lot_id AS lot_id
+    $sql = "SELECT u.id as user_id, u.name as user_name, u.email,
+       b.price as max_price, b.lot_id as lot_id, l.name
             FROM bid b
-            JOIN user u ON b.user_id = u.id
-            WHERE b.lot_id = ".$lotId."
-            ORDER BY b.price DESC LIMIT 1";
+            JOIN lot l ON b.lot_id = l.id
+            JOIN user u ON b.user_id = u.id WHERE b.lot_id = ".$lotId." ORDER BY b.price DESC LIMIT 1";
     $result = mysqli_query($link, $sql);
     if ($result) {
-        return mysqli_fetch_array($result, MYSQLI_ASSOC);
+        return mysqli_fetch_all($result, MYSQLI_ASSOC);
     } else {
         print("Error: Запрос не выполнен" . mysqli_error($link));
         exit();
@@ -529,7 +529,7 @@ function updateWinner(mysqli $link, int $userId, int $lotId): mysqli_result|bool
 }
 
 function getWinner(mysqli $link): bool|array {
-    $sql = "SELECT l.id AS lot_id, l.name, l.winner_id, u.name, u.email
+    $sql = "SELECT l.id AS lot_id, l.name AS lot_name, l.winner_id, u.name, u.email
             FROM lot l
             JOIN bid b ON l.winner_id = b.user_id
             JOIN user u ON b.user_id = u.id

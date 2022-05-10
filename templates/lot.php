@@ -2,7 +2,7 @@
     <ul class="nav__list container">
     <?php foreach ($sqlCategories as $value):?>
         <li class="nav__item <?=$value['symbol_code'] === $sqlCatLot['symbol_code'] ? 'nav__item--current' : '' ?>">
-            <a href="all-lots.html"><?=$value['name'] ?></a>
+            <a href="all-lots.php?categoryName=<?=$value['symbol_code']?>"><?=$value['name'] ?></a>
         </li>
     <?php endforeach;?>
     </ul>

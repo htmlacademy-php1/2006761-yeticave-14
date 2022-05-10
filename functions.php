@@ -364,12 +364,13 @@ function checkPassword(array $login, array $user): bool
 
 function getLotBySearch(mysqli $link, string $search, int $limit, int $offset): array
 {
-    $sql = "SELECT l.id, l.name AS lot_name, l.description, l.start_price, l.img_url, l.finished_at, c.name AS cat_name
+    $sql = 'SELECT l.id, l.name AS lot_name, l.description, l.start_price, l.img_url, l.finished_at, c.name AS cat_name
             FROM lot l
             JOIN category c ON l.category_id = c.id
-            WHERE  MATCH(l.name, l.description) AGAINST(? IN BOOLEAN MODE) AND l.finished_at > NOW() ORDER BY l.created_at LIMIT ".$limit." OFFSET ".$offset."";
+            WHERE  MATCH(l.name, l.description) AGAINST(? IN BOOLEAN MODE) AND l.finished_at > NOW() ORDER BY l.created_at LIMIT ? OFFSET ?';
 
-    $stmt = db_get_prepare_stmt($link, $sql, [$search]);
+    $stmt = mysqli_prepare($link, $sql);
+    mysqli_stmt_bind_param($stmt, 'sii', $search, $limit, $offset);
     mysqli_stmt_execute($stmt);
     $result = mysqli_stmt_get_result($stmt);
     return mysqli_fetch_all($result, MYSQLI_ASSOC);
@@ -638,14 +639,15 @@ function getTime(array $sqlBid): array
 
 function getLotByCategory(mysqli $link, string $categoryName, int $limit, int $offset): array
 {
-    $sql = "SELECT l.id AS id, l.name AS lot_name, l.start_price, l.img_url, l.finished_at,
+    $sql = 'SELECT l.id AS id, l.name AS lot_name, l.start_price, l.img_url, l.finished_at,
 		           c.name AS cat_name, c.symbol_code
             FROM lot l
             JOIN category c ON c.id = l.category_id
             WHERE l.finished_at > NOW() AND c.symbol_code = ?
-            ORDER BY l.created_at DESC LIMIT ".$limit." OFFSET ".$offset."";
+            ORDER BY l.created_at DESC LIMIT ? OFFSET ?';
 
-    $stmt = db_get_prepare_stmt($link, $sql, [$categoryName], $limit, $offset);
+    $stmt = mysqli_prepare($link, $sql);
+    mysqli_stmt_bind_param($stmt, 'sii', $categoryName, $limit, $offset);
     mysqli_stmt_execute($stmt);
     $result = mysqli_stmt_get_result($stmt);
 

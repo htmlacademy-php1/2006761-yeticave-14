@@ -4,31 +4,27 @@ require_once('boot.php');
 
 $sqlCategories = getCategories($link);
 $userName = getSessionName();
+$userId = getSessionUserId();
 $errors = '';
-
 $lotId = (int)$_GET['ID'];
-
 $sqlCatLot = getCatLotMaxPrice($link, $lotId);
-if (checkExistDbVal($sqlCatLot)) {
-    $pageContent = include_template('404.php', [
-    'sqlCategories' => $sqlCategories,
-    'userName' => $userName,
-    ]);
-    $layoutContent = include_template('layout.php', [
-        'categories' => $sqlCategories,
-        'content' => $pageContent,
-        'title' => 'Страница не найдена',
-        'userName' => $userName,
-    ]);
+$sqlPosters = getPosters($link);
+$sqlBidUserByLotId = null;
+$price = null;
 
-    print($layoutContent);
-    exit();
+//Если лота не существует
+if (checkExistDbVal($sqlCatLot)) {
+    notFoundPage($sqlCategories, $userName);
 }
 
-$sqlBidUser = getBidUser($link, $lotId);
+//Если лот участвует в торгах
+if ($checkActiveLot = checkActiveLot($sqlPosters, $lotId)) {
+    $sqlBidUserByLotId = getBidUser($link, $lotId);
+    $price = getPrice($sqlBidUserByLotId, $sqlCatLot);
+}
+$checkAddLot = checkAddLot($link, $lotId, $userName, $userId);
 
-$price = getPrice($sqlBidUser, $sqlCatLot);
-
+//Добавление новой ставки
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($userName)) {     //Проверка, что пользователь залогинен.
         header("Location: login.php");
@@ -46,16 +42,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header("Location: /lot.php?ID={$lotId}");
     }
 }
-$pageContent = include_template('lot.php', [
-    'sqlCategories' => $sqlCategories,
+
+$pageContent = include_template('lot.php',
+    ['sqlCategories' => $sqlCategories,
     'sqlCatLot' => $sqlCatLot,
-    'sqlBidUser' => $sqlBidUser,
+    'sqlBidUser' => $sqlBidUserByLotId,
     'userName' => $userName,
     'lotId' => $lotId,
     'price' => $price,
     'errors' => $errors,
-
-]);
+    'checkAddLot' => $checkAddLot, ]
+    );
 
 $layoutContent = include_template('layout.php', [
     'categories' => $sqlCategories,

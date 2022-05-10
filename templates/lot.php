@@ -12,13 +12,14 @@
     <div class="lot-item__content">
     <div class="lot-item__left">
         <div class="lot-item__image">
-        <img src="<?=htmlspecialchars($sqlCatLot['img_url']) ?>" width="730" height="548" alt="Сноуборд">
+        <img src="<?=htmlspecialchars($sqlCatLot['img_url']) ?>" width="730" height="548" alt="<?=$sqlCatLot['lot_name']?>">
         </div>
         <p class="lot-item__category">Категория: <span><?=htmlspecialchars($sqlCatLot['cat_name']) ?></span></p>
         <p class="lot-item__description"><?=htmlspecialchars($sqlCatLot['description']) ?></p>
     </div>
     <div class="lot-item__right">
-        <?php if (!empty($userName)): ?>
+        
+        <?php if ($checkAddLot): ?>
         <div class="lot-item__state">
         <div class="lot-item__timer timer  <?=oneHourTimerFinishing($sqlCatLot['finished_at']); ?>">
             <?=formatTimer($sqlCatLot['finished_at']); ?>
@@ -43,6 +44,9 @@
             <button type="submit" class="button">Сделать ставку</button>
         </form>
         </div>
+        <?php endif; ?>
+
+        <?php if ($sqlBidUser !==null): ?>
         <div class="history">
         <h3>История ставок (<span><?=count($sqlBidUser); ?></span>)</h3>
         <table class="history__list">

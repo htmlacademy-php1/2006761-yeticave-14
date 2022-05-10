@@ -5,6 +5,11 @@ require_once('boot.php');
 $sqlCategories = getCategories($link);
 $userName = getSessionName();
 
+//Если не авторизован, то доступ запрещен
+    if (empty($userName)) {
+        errorPage($sqlCategories, $userName);
+    }
+
 $sqlActiveBid = getActiveBid($link); //актуальные ставки
 $sqlActiveBid = getTime($sqlActiveBid);
 

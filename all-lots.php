@@ -16,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET' || empty(trim($_GET['categoryName']))) 
     $layoutContent = include_template('layout.php', [
         'categories' => $sqlCategories,
         'content' => $pageContent,
-        'title' => 'Страница поиска',
+        'title' => 'Лоты по категории',
         'userName' => $userName,
     ]);
 
@@ -47,7 +47,7 @@ $pageContent = include_template('all-lots.php', [
 $layoutContent = include_template('layout.php', [
     'categories' => $sqlCategories,
     'content' => $pageContent,
-    'title' => 'Страница поиска',
+    'title' => 'Лоты по категории',
     'userName' => $userName,
     'sqlCatLot' => $sqlLotCategory,
 ]);

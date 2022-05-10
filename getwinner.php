@@ -1,13 +1,14 @@
 <?php
 
+const DSN = 'smtp://a01042aa5c584b:b117676541b9f6@smtp.mailtrap.io:2525';
+
 use Symfony\Component\Mailer\Transport;
 use Symfony\Component\Mailer\Mailer;
 use Symfony\Component\Mime\Email;
 
 require_once 'boot.php';
 
-$dsn = 'smtp://a01042aa5c584b:b117676541b9f6@smtp.mailtrap.io:2525';
-$transport = Transport::fromDsn($dsn);
+$transport = Transport::fromDsn(DSN);
 
 // Список последних ставок по лотам без победителей, дата истечения которых меньше или равна текущей дате
 $sqlLotList = getLotWithoutWinner($link);

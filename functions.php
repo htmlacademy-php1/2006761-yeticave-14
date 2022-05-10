@@ -75,7 +75,7 @@ function getCatLotMaxPrice(mysqli $link, int $lotId): mixed
             FROM lot AS l
             JOIN category AS c ON l.category_id = c.id
             LEFT JOIN bid AS b ON b.lot_id = l.id
-            WHERE l.finished_at > NOW() AND l.id = ?
+            WHERE l.id = ?
             ORDER BY price DESC';
     $stmt = mysqli_prepare($link, $sql);
     mysqli_stmt_bind_param($stmt, 'i', $lotId);
@@ -175,8 +175,9 @@ function validateFormAdd(array $lot, array $categoriesId, $files): array
             $errors[$key] = $rule($value);
         }
         //Входит ли поле к списку заполнения
-        if (in_array($key, $requiredFields) and empty($value)) {
-            $errors[$key] = 'Поле надо заполнить';
+        if (in_array($key, $requiredFields) && empty($value)) {
+            //Есть ли уже ошибки в данном массиве
+            $errors[$key] = empty($errors[$key]) ? 'Поле надо заполнить' : $errors[$key] ;
         }
     }
 
@@ -327,6 +328,11 @@ function getSessionName(): string
     return $_SESSION['user']['name'] ?? '';
 }
 
+function getSessionUserId(): string
+{
+    return $_SESSION['user']['id'] ?? '';
+}
+
 function errorPage(array $sqlCategories, string $userName): void
 {
     $pageContent = include_template('403.php', ['sqlCategories' => $sqlCategories,]);
@@ -344,7 +350,10 @@ function errorPage(array $sqlCategories, string $userName): void
 
 function notFoundPage(array $sqlCategories, string $userName): void
 {
-    $pageContent = include_template('404.php', ['sqlCategories' => $sqlCategories,]);
+    $pageContent = include_template('404.php',
+    ['sqlCategories' => $sqlCategories,
+     'userName' => $userName, ]
+    );
 
     $layoutContent = include_template('layout.php', [
         'content' => $pageContent,
@@ -426,7 +435,7 @@ function validateFormLot(string $userPrice, array $price): string
         return 'Введите целое положительное число';
     }
 
-    if ($userPrice <= $price['minBid']) { //Если меньше минимальной ставки
+    if ($userPrice < $price['minBid']) { //Если меньше минимальной ставки
         return 'Должно быть не менее '.$price['minBid'].'';
     }
     return '';
@@ -679,3 +688,66 @@ function getCountLotByCategory(mysqli $link, string $categoryName): int
         exit();
     }
 }
+
+function getLotByLotId(mysqli $link, int $lotId): array|null
+{
+    $sql = 'SELECT user_id FROM lot WHERE id = ?';
+
+    $stmt = mysqli_prepare($link, $sql);
+    mysqli_stmt_bind_param($stmt, 'i', $lotId);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+
+    if ($result) {
+        return mysqli_fetch_assoc($result);
+    } else {
+        $error = mysqli_error($link);
+        print("Error MySQL: " . $error);
+    }
+}
+
+function getlastBidUserById(mysqli $link, int $lotId): array|null
+{
+    $sql = 'SELECT u.id AS user_id
+            FROM bid b
+            JOIN user u ON b.user_id = u.id
+            WHERE b.lot_id = ?
+            ORDER BY b.created_at DESC';
+    $stmt = mysqli_prepare($link, $sql);
+    mysqli_stmt_bind_param($stmt, 'i', $lotId);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+
+    if ($result) {
+        return mysqli_fetch_assoc($result);
+    } else {
+        $error = mysqli_error($link);
+        print("Error MySQL: " . $error);
+    }
+}
+
+function checkAddLot(mysqli $link, int $lotId, string $userName, string $userId): bool
+{
+    $userId = (int)($userId);
+
+    $sqlBidUserByUserId = getlastBidUserById($link, $lotId);
+    $sqlLotByLotId = getLotByLotId($link, $lotId);
+
+    //Проверяем существует ли последняя ставка
+    $lastBid = isset($sqlBidUserByUserId) ? $sqlBidUserByUserId['user_id'] : false;
+    //срок размещения лота истёк
+    //Проверяем пользователь авторизован, лот не создан текущим пользователем, последняя ставка сделана не текущим пользователем
+    return (!empty($userName) && $lastBid !== $userId) && $sqlLotByLotId['user_id'] !== $userId;
+}
+
+function checkActiveLot(array $sqlPosters, int $lotId): bool
+{
+    $lotId = (string)$lotId;
+    foreach ($sqlPosters as $value => $key) {
+       if ($lotId === $key['id']) {
+           return true;
+       }
+    }
+    return false;
+}
+

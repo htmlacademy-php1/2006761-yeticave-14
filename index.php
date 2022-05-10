@@ -1,7 +1,7 @@
 <?php
 
-require_once('boot.php');
-require_once('getwinner.php');
+require_once ('boot.php');
+require_once ('getwinner.php');
 
     $sqlCategories = getCategories($link);
 
@@ -9,10 +9,10 @@ require_once('getwinner.php');
 
     $userName = getSessionName();
 
-    $pageContent = include_template('main.php', [
-        'categories' => $sqlCategories,
-        'posters' => $sqlPosters,
-    ]);
+    $pageContent = include_template('main.php',
+        ['categories' => $sqlCategories,
+        'posters' => $sqlPosters, ]
+    );
 
     $layoutContent = include_template('layout.php', [
         'categories' => $sqlCategories,

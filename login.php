@@ -8,9 +8,10 @@ $userName = getSessionName();
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
-    //Если авторизован, то доступ запрещен
+    //Если уже авторизован
     if (!empty($userName)) {
-        errorPage($sqlCategories, $userName);
+        header('Location: /');
+        exit();
     }
 
     $pageContent = include_template('login.php', [

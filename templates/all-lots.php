@@ -1,5 +1,4 @@
-<div class="page-wrapper">
-  <main>
+<main>
     <nav class="nav">
         <ul class="nav__list container">
             <?php foreach ($sqlCategories as $value):?>
@@ -64,5 +63,5 @@
         </ul>
         <?php endif;?>
     </div>
-  </main>
-</div>
+</main>
+

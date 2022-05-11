@@ -2,27 +2,29 @@
 
 const LOT_LIMIT = 9; //Кол-во лотов на странице
 
-require_once('boot.php');
+require_once 'boot.php';
 
 $sqlCategories = getCategories($link);
 $userName = getSessionName();
 
-if ($_SERVER['REQUEST_METHOD'] !== 'GET' || empty(trim($_GET['search']))) { //Проверяем, что была отправлена форма и получившаяся строка не пустая.
+//Проверяем, что была отправлена форма и получившаяся строка не пустая.
+if ($_SERVER['REQUEST_METHOD'] !== 'GET' || empty(trim($_GET['search']))) {
 
     $search = '';
 
-    $pageContent = include_template('search.php', [
-        'sqlCategories' => $sqlCategories,
-        'search' => $search,
+    $pageContent = include_template(
+        'search.php',
+        ['sqlCategories' => $sqlCategories,
+        'search' => $search, ]
+    );
 
-    ]);
-
-    $layoutContent = include_template('layout.php', [
-        'categories' => $sqlCategories,
+    $layoutContent = include_template(
+        'layout.php',
+        ['categories' => $sqlCategories,
         'content' => $pageContent,
         'title' => 'Страница поиска',
-        'userName' => $userName,
-    ]);
+        'userName' => $userName, ]
+    );
 
     print($layoutContent);
     exit();
@@ -30,31 +32,36 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET' || empty(trim($_GET['search']))) { //П
 
 $currentPage = (int)($_GET['page'] ?? 1);
 
-$offset = LOT_LIMIT * ($currentPage - 1); //Смещение для запроса к БД
+//Смещение для запроса к БД
+$offset = LOT_LIMIT * ($currentPage - 1); 
 
-$search = trim(filter_input(INPUT_GET, 'search')); //Получаем значение поиска от пользователя
+//Получаем значение поиска от пользователя
+$search = trim(filter_input(INPUT_GET, 'search'));
 $search = mysqli_real_escape_string($link, $search);
 
 if (empty($searchResult = getLotBySearch($link, $search, LOT_LIMIT, $offset))) {
     $search = 'Ничего не найдено';
 }
 
-$countLotFromSearch = getCountLotBySearch($link, $search); //Получаем кол-во найденных лотов
+//Получаем кол-во найденных лотов
+$countLotFromSearch = getCountLotBySearch($link, $search);
 
-$pagination = createPagination($currentPage, $countLotFromSearch, LOT_LIMIT); //Создаем пагинацию
-
-$pageContent = include_template('search.php', [
-    'sqlCategories' => $sqlCategories,
+//Создаем пагинацию
+$pagination = createPagination($currentPage, $countLotFromSearch, LOT_LIMIT);
+$pageContent = include_template(
+    'search.php',
+    ['sqlCategories' => $sqlCategories,
     'search' => $search,
     'searchResult'=> $searchResult,
-    'pagination' => $pagination,
-]);
+    'pagination' => $pagination, ]
+);
 
-$layoutContent = include_template('layout.php', [
-    'categories' => $sqlCategories,
+$layoutContent = include_template(
+    'layout.php',
+    ['categories' => $sqlCategories,
     'content' => $pageContent,
     'title' => 'Страница поиска',
-    'userName' => $userName,
-]);
+    'userName' => $userName, ]
+);
 
 print($layoutContent);

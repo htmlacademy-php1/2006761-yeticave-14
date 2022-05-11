@@ -1,6 +1,6 @@
 <?php
 
-require_once('boot.php');
+require_once 'boot.php';
 
 $sqlCategories = getCategories($link);
 $userName = getSessionName();
@@ -13,7 +13,7 @@ $sqlBidUserByLotId = null;
 $price = null;
 
 //Если лота не существует
-if (checkExistDbVal($sqlCatLot)) {
+if (empty($sqlCatLot) || $sqlCatLot ===null) {
     notFoundPage($sqlCategories, $userName);
 }
 
@@ -26,11 +26,13 @@ $checkAddLot = checkAddLot($link, $lotId, $userName, $userId);
 
 //Добавление новой ставки
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (empty($userName)) {     //Проверка, что пользователь залогинен.
+    //Проверка, что пользователь залогинен.
+    if (empty($userName)) {
         header("Location: login.php");
         exit();
     }
-    $userPrice = trim(filter_input(INPUT_POST, 'cost')); // Получаем значение из формы и проверяем что значение целое
+    // Получаем значение из формы и проверяем что значение целое
+    $userPrice = trim(filter_input(INPUT_POST, 'cost'));
 
     $errors = validateFormLot($userPrice, $price);
 
@@ -43,7 +45,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-$pageContent = include_template('lot.php',
+$pageContent = include_template(
+    'lot.php',
     ['sqlCategories' => $sqlCategories,
     'sqlCatLot' => $sqlCatLot,
     'sqlBidUser' => $sqlBidUserByLotId,
@@ -52,14 +55,15 @@ $pageContent = include_template('lot.php',
     'price' => $price,
     'errors' => $errors,
     'checkAddLot' => $checkAddLot, ]
-    );
+);
 
-$layoutContent = include_template('layout.php', [
+$layoutContent = include_template(
+    'layout.php', [
     'categories' => $sqlCategories,
     'content' => $pageContent,
     'title' => 'Страница лота',
     'userName' => $userName,
-    'sqlCatLot' => $sqlCatLot,
-]);
+    'sqlCatLot' => $sqlCatLot, ]
+);
 
 print($layoutContent);

@@ -10,7 +10,6 @@ require_once 'boot.php';
 
 $transport = Transport::fromDsn(DSN);
 
-// Список последних ставок по лотам без победителей, дата истечения которых меньше или равна текущей дате
 $sqlLotList = getLotWithoutWinner($link);
 
 // Проверка на истечение срока размещения лотов
@@ -22,7 +21,6 @@ if (!empty($sqlLotList)) {
 
     $sqlLastBid = array_filter($sqlLastBid);
 
-    // Записываем в лот победителем автора последней ставки
     foreach ($sqlLastBid as $value) {
         updateWinner($link, $value['user_id'], $value['lot_id']);
     }

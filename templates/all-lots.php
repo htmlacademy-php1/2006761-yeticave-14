@@ -3,7 +3,7 @@
     <nav class="nav">
         <ul class="nav__list container">
             <?php foreach ($sqlCategories as $value):?>
-                <li class="nav__item">
+                <li class='nav__item <?=$value['symbol_code'] === $_GET['categoryName'] ? 'nav__item--current' : '' ?>'>
                     <a href="all-lots.php?categoryName=<?=$value['symbol_code']?>"><?=$value['name'] ?></a>
                 </li>
             <?php endforeach;?>
@@ -12,12 +12,12 @@
     <div class="container">
         <section class="lots">
             <div class="lots__header">
-                <h2><?=empty($search) ? 'Пустой запрос' : 'Результаты поиска по запросу: '?><span><?= $search; ?></span></h2>
+                <h2><?=empty($sqlLotCategory) ? 'Лотов из данной категории нет' : "Все лоты в категории: "?><span><?=$sqlLotCategory[0]['cat_name'] ?? ''?></span></h2>
             </div>
-            <?php if (isset($searchResult)): ?>
+            <?php if (!empty($sqlLotCategory)): ?>
             <ul class="lots__list">
                 <!--заполните этот список из массива с товарами-->
-                <?php foreach ($searchResult as $value): ?>
+                <?php foreach ($sqlLotCategory as $value): ?>
                 <li class="lots__item lot">
                     <div class="lot__image">
                         <img src="<?=htmlspecialchars($value['img_url']); ?>" width="350" height="260" alt="">
@@ -45,7 +45,7 @@
         <?php if (isset($pagination['countPage']) && $pagination['countPage'] > 1):?>
         <ul class="pagination-list">
             <li class="pagination-item pagination-item-prev">
-                <a href="<?='/search.php?search=' . htmlspecialchars($search) . '&page=' . $pagination['prevPage']?>">Назад</a>
+                <a href="<?='all-lots.php?categoryName=' . htmlspecialchars($categoryName) . '&page=' . $pagination['prevPage']?>">Назад</a>
             </li>
             <?php foreach ($pagination['pages'] as $value):?>
                 <?php if ($value === $pagination['currentPage']):?>
@@ -54,12 +54,12 @@
                 </li>
                 <?php else:?>
                 <li class="pagination-item">
-                    <a href="<?='/search.php?search=' . htmlspecialchars($search) . '&page=' . $value?>"><?=$value?></a>
+                    <a href="<?='all-lots.php?categoryName=' . htmlspecialchars($categoryName) . '&page=' . $value?>"><?=$value?></a>
                 </li>
                 <?php endif;?>
             <?php endforeach;?>
             <li class="pagination-item pagination-item-next">
-                <a href="<?='/search.php?search=' . htmlspecialchars($search) . '&page=' . $pagination['nextPage']?>">Вперед</a>
+                <a href="<?='all-lots.php?categoryName=' . htmlspecialchars($categoryName) . '&page=' . $pagination['nextPage']?>">Вперед</a>
             </li>
         </ul>
         <?php endif;?>

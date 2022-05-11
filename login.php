@@ -3,8 +3,15 @@
 require_once('boot.php');
 
 $sqlCategories = getCategories($link);
+$userName = getSessionName();
+
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+
+    //Если авторизован, то доступ запрещен
+    if (!empty($userName)) {
+        errorPage($sqlCategories, $userName);
+    }
 
     $pageContent = include_template('login.php', [
         'sqlCategories' => $sqlCategories,

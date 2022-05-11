@@ -1,8 +1,8 @@
 <nav class="nav">
     <ul class="nav__list container">
-    <?php foreach($sqlCategories as $value):?>
+    <?php foreach ($sqlCategories as $value):?>
     <li class="nav__item">
-        <a href="all-lots.html"><?=$value['name'] ?></a>
+        <a href="all-lots.php?categoryName=<?=$value['symbol_code']?>"><?=$value['name'] ?></a>
     </li>
     <?php endforeach;?>
     </ul>
@@ -10,7 +10,7 @@
 <section class="rates container">
     <h2>Мои ставки</h2>
     <table class="rates__list">
-        <?php foreach($sqlActiveBid as $value): ?>
+        <?php foreach ($sqlActiveBid as $value): ?>
         <tr class="rates__item">
             <td class="rates__info">
             <div class="rates__img">
@@ -33,7 +33,7 @@
         </tr>
         <?php endforeach;?>
 
-        <?php foreach($sqlWinnerBid as $value): ?>
+        <?php foreach ($sqlWinnerBid as $value): ?>
         <tr class="rates__item rates__item--win">
             <td class="rates__info">
             <div class="rates__img">
@@ -59,7 +59,7 @@
         </tr>
         <?php endforeach;?>
 
-        <?php foreach($sqlFinishedBid as $value): ?>
+        <?php foreach ($sqlFinishedBid as $value): ?>
         <tr class="rates__item rates__item--end">
             <td class="rates__info">
             <div class="rates__img">

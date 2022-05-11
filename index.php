@@ -1,16 +1,7 @@
 <?php
 
-require_once('boot.php');
-
-$sqlLotList = getLotWithoutWinner($link);
-
-foreach ($sqlLotList as $value) {
-    $sqlLastBid = getLastBid($link, $value['lot_id']);
-}
-
-if (!empty($sqlLastBid)) {
-    updateWinner($link, $sqlLastBid['user_id'], $sqlLastBid['lot_id']);
-}
+require_once ('boot.php');
+require_once ('getwinner.php');
 
     $sqlCategories = getCategories($link);
 
@@ -18,10 +9,10 @@ if (!empty($sqlLastBid)) {
 
     $userName = getSessionName();
 
-    $pageContent = include_template('main.php', [
-        'categories' => $sqlCategories,
-        'posters' => $sqlPosters,
-    ]);
+    $pageContent = include_template('main.php',
+        ['categories' => $sqlCategories,
+        'posters' => $sqlPosters, ]
+    );
 
     $layoutContent = include_template('layout.php', [
         'categories' => $sqlCategories,

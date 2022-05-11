@@ -1,6 +1,7 @@
 <?php
 
-function priceModify(int $price): string {
+function priceModify(int $price): string
+{
     ceil($price);
     if ($price > 1000) {
         $price = number_format($price, 0, '', ' ');
@@ -8,7 +9,8 @@ function priceModify(int $price): string {
     return (string) $price . ' ₽';
 }
 
-function formatTimer(string $date): string {
+function formatTimer(string $date): string
+{
     $dateFinish = strtotime($date);
     $secDifference = $dateFinish - time();
     $hours = floor($secDifference / 3600);
@@ -17,7 +19,8 @@ function formatTimer(string $date): string {
     return "{$hours}:{$minutes}";
 }
 
-function oneHourTimerFinishing(string $date): string {
+function oneHourTimerFinishing(string $date): string
+{
     $dateFinish = strtotime($date);
     $secDifference = $dateFinish - time();
     $oneHour = 60 * 60;
@@ -26,17 +29,19 @@ function oneHourTimerFinishing(string $date): string {
     return $isLessOneHour ? 'timer--finishing' : '';
 }
 //Проверяет наличие значения из БД
-function checkExistDbVal(mixed $checkingItem): bool {
-  return empty($checkingItem) || $checkingItem ===null;
+function checkExistDbVal(mixed $checkingItem): bool
+{
+    return empty($checkingItem) || $checkingItem ===null;
 }
 
-function minPrice(int $curPrice, int $stepPrice): int {
+function minPrice(int $curPrice, int $stepPrice): int
+{
     $minPrice = $curPrice + $stepPrice;
     return $curPrice;
 }
 
-function getCategories(mysqli $link): array {
-
+function getCategories(mysqli $link): array
+{
     $sql = 'SELECT * FROM category';
     $result = mysqli_query($link, $sql);
     if ($result) {
@@ -47,7 +52,8 @@ function getCategories(mysqli $link): array {
     }
 }
  
-function getPosters(mysqli $link): array {
+function getPosters(mysqli $link): array
+{
     $sql = 'SELECT l.id AS id, l.name AS lot_name, start_price, img_url, finished_at, c.name AS cat_name FROM lot AS l
             JOIN category AS c ON c.id = l.category_id
             WHERE l.finished_at > NOW()
@@ -61,15 +67,15 @@ function getPosters(mysqli $link): array {
     }
 }
 
-function getCatLotMaxPrice(mysqli $link, int $lotId): mixed {
-
+function getCatLotMaxPrice(mysqli $link, int $lotId): mixed
+{
     $sql = 'SELECT l.name as lot_name, l.description, l.img_url, l.finished_at, l.start_price, l.step_price,
-                   c.name as cat_name,
+                   c.name as cat_name, c.symbol_code,
                    b.price
             FROM lot AS l
             JOIN category AS c ON l.category_id = c.id
             LEFT JOIN bid AS b ON b.lot_id = l.id
-            WHERE l.finished_at > NOW() AND l.id = ?
+            WHERE l.id = ?
             ORDER BY price DESC';
     $stmt = mysqli_prepare($link, $sql);
     mysqli_stmt_bind_param($stmt, 'i', $lotId);
@@ -84,8 +90,8 @@ function getCatLotMaxPrice(mysqli $link, int $lotId): mixed {
     }
 }
 
-function getBidUser(mysqli $link, int $lotId): array {
-
+function getBidUser(mysqli $link, int $lotId): array
+{
     $sql = 'SELECT b.lot_id, b.price, b.created_at, u.name AS user_name FROM bid AS b
             JOIN user AS u ON b.user_id = u.id
             WHERE b.lot_id = ?';
@@ -102,11 +108,13 @@ function getBidUser(mysqli $link, int $lotId): array {
     }
 }
 
-function getPostVal(mixed $val): ?string {
+function getPostVal(mixed $val): ?string
+{
     return $_POST[$val] ?? '';
 }
 
-function addLot(mysqli $link, array $lot, array $files): bool {
+function addLot(mysqli $link, array $lot, array $files): bool
+{
     $lot['finished_at'] = date("Y-m-d H:i:s", strtotime($lot['finished_at']));
     $lot['img_url'] = uploadFile($files);
     $lot['user_id'] = $_SESSION['user']['id'];
@@ -120,25 +128,27 @@ function addLot(mysqli $link, array $lot, array $files): bool {
     return mysqli_stmt_execute($stmt);
 }
 
-function uploadFile(array $files): string {
+function uploadFile(array $files): string
+{
     $tmpName = $files['img_url']['tmp_name'];
     $fileType = mime_content_type($tmpName);
 
-    switch($fileType) {
+    switch ($fileType) {
         case 'image/png':
             $extension = '.png';
             break;
         case 'image/jpeg':
             $extension = '.jpeg';
             break;
-    } 
+    }
     $fileName = uniqid() . $extension;
     move_uploaded_file($tmpName, 'uploads/' . $fileName);
 
     return 'uploads/' . $fileName;
 }
 
-function validateFormAdd(array $lot, array $categoriesId, $files): array {
+function validateFormAdd(array $lot, array $categoriesId, $files): array
+{
     $requiredFields = ['name', 'category_id', 'description', 'start_price', 'step_price', 'finished_at'];
 
     $rules = [
@@ -165,8 +175,9 @@ function validateFormAdd(array $lot, array $categoriesId, $files): array {
             $errors[$key] = $rule($value);
         }
         //Входит ли поле к списку заполнения
-        if (in_array($key, $requiredFields) and empty($value)) {
-            $errors[$key] = 'Поле надо заполнить';
+        if (in_array($key, $requiredFields) && empty($value)) {
+            //Есть ли уже ошибки в данном массиве
+            $errors[$key] = empty($errors[$key]) ? 'Поле надо заполнить' : $errors[$key] ;
         }
     }
 
@@ -175,14 +186,16 @@ function validateFormAdd(array $lot, array $categoriesId, $files): array {
     return $errors;
 }
 
-function validateCategory(string $id, array $allowed_list): ?string {
+function validateCategory(string $id, array $allowed_list): ?string
+{
     if (!in_array($id, $allowed_list)) {
         return 'Указана несуществующая категория';
     }
     return null;
 }
 
-function validateValue(string $value): ?string {
+function validateValue(string $value): ?string
+{
     $value = intval($value);
     if ($value <= 0) {
         return 'Значение должно быть больше нуля';
@@ -190,7 +203,8 @@ function validateValue(string $value): ?string {
     return null;
 }
 
-function validateFinishedAt(string $finishedAt): ?string {
+function validateFinishedAt(string $finishedAt): ?string
+{
     if (!is_date_valid($finishedAt)) {
         return 'Значение должно быть датой в формате «ГГГГ-ММ-ДД»';
     }
@@ -201,7 +215,8 @@ function validateFinishedAt(string $finishedAt): ?string {
     return null;
 }
 
-function getDateRange(string $finishedAt, string $now): array {
+function getDateRange(string $finishedAt, string $now): array
+{
     $finishedAt = date_create($finishedAt);
     $now = date_create($now);
 
@@ -222,8 +237,8 @@ function getDateRange(string $finishedAt, string $now): array {
     return [$hours, $minutes];
 }
 
-function validateImg(array $files): string {
-
+function validateImg(array $files): string
+{
     if (empty($files['img_url']['name'])) {
         return 'Загрузите картинку';
     }
@@ -235,19 +250,21 @@ function validateImg(array $files): string {
         return 'Загрузите картинку в формате png или jpeg';
     }
 
-    return '';   
+    return '';
 }
 
-function addUser(mysqli $link, array $registration): bool {
+function addUser(mysqli $link, array $registration): bool
+{
     $sql = 'INSERT INTO user (email, password, name, contacts) VALUES (?, ?, ?, ?)';
     $stmt = db_get_prepare_stmt($link, $sql, $registration);
     return mysqli_stmt_execute($stmt);
 }
 
-function validateEmail(mysqli $link, array $registration): string {
+function validateEmail(mysqli $link, array $registration): string
+{
     $email = mysqli_real_escape_string($link, $registration['email']);
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-         return 'Некорректный e-mail';
+        return 'Некорректный e-mail';
     }
 
     $sql = "SELECT email FROM user WHERE email = '" . $email . "'";
@@ -261,7 +278,8 @@ function validateEmail(mysqli $link, array $registration): string {
     }
 }
 
-function validateFormSignUp(mysqli $link, array $registration): array {
+function validateFormSignUp(mysqli $link, array $registration): array
+{
     $requiredFields = ['email', 'password', 'name', 'contacts'];
 
     $errors = [];
@@ -275,8 +293,9 @@ function validateFormSignUp(mysqli $link, array $registration): array {
     return $errors;
 }
 
-function getUserDb(mysqli $link, string $email): array {
-	$sql = "SELECT * FROM user WHERE email = ?";
+function getUserDb(mysqli $link, string $email): array
+{
+    $sql = "SELECT * FROM user WHERE email = ?";
     $stmt = mysqli_prepare($link, $sql);
     mysqli_stmt_bind_param($stmt, 's', $email);
     mysqli_stmt_execute($stmt);
@@ -286,7 +305,8 @@ function getUserDb(mysqli $link, string $email): array {
     return $result && !empty($user) ? $user : [];
 }
 
-function validateFormLogin(mysqli $link, array $login, mixed $user): array {
+function validateFormLogin(mysqli $link, array $login, mixed $user): array
+{
     $requiredFields = ['email', 'password'];
 
     $errors = [];
@@ -297,17 +317,24 @@ function validateFormLogin(mysqli $link, array $login, mixed $user): array {
     }
 
     if (!$user && empty($errors['email'])) {
-		    $errors['email'] = 'Такой пользователь не найден';
-	}
+        $errors['email'] = 'Такой пользователь не найден';
+    }
 
     return $errors;
 }
 
-function getSessionName(): string {
+function getSessionName(): string
+{
     return $_SESSION['user']['name'] ?? '';
 }
 
-function errorPage(array $sqlCategories, string $userName): void{
+function getSessionUserId(): string
+{
+    return $_SESSION['user']['id'] ?? '';
+}
+
+function errorPage(array $sqlCategories, string $userName): void
+{
     $pageContent = include_template('403.php', ['sqlCategories' => $sqlCategories,]);
 
     $layoutContent = include_template('layout.php', [
@@ -321,8 +348,12 @@ function errorPage(array $sqlCategories, string $userName): void{
     exit();
 }
 
-function notFoundPage(array $sqlCategories, string $userName): void{
-    $pageContent = include_template('404.php', ['sqlCategories' => $sqlCategories,]);
+function notFoundPage(array $sqlCategories, string $userName): void
+{
+    $pageContent = include_template('404.php',
+    ['sqlCategories' => $sqlCategories,
+     'userName' => $userName, ]
+    );
 
     $layoutContent = include_template('layout.php', [
         'content' => $pageContent,
@@ -335,24 +366,27 @@ function notFoundPage(array $sqlCategories, string $userName): void{
     exit();
 }
 
-function checkPassword(array $login, array $user): bool {
+function checkPassword(array $login, array $user): bool
+{
     return password_verify($login['password'], $user['password']);
 }
 
-function getLotBySearch(mysqli $link, string $search, int $limit, int $offset): array {
-    $sql = "SELECT l.id, l.name AS lot_name, l.description, l.start_price, l.img_url, l.finished_at, c.name AS cat_name
+function getLotBySearch(mysqli $link, string $search, int $limit, int $offset): array
+{
+    $sql = 'SELECT l.id, l.name AS lot_name, l.description, l.start_price, l.img_url, l.finished_at, c.name AS cat_name
             FROM lot l
             JOIN category c ON l.category_id = c.id
-            WHERE  MATCH(l.name, l.description) AGAINST(? IN BOOLEAN MODE) AND l.finished_at > NOW() ORDER BY l.created_at LIMIT ".$limit." OFFSET ".$offset."";
+            WHERE  MATCH(l.name, l.description) AGAINST(? IN BOOLEAN MODE) AND l.finished_at > NOW() ORDER BY l.created_at LIMIT ? OFFSET ?';
 
-    $stmt = db_get_prepare_stmt($link, $sql, [$search]);
+    $stmt = mysqli_prepare($link, $sql);
+    mysqli_stmt_bind_param($stmt, 'sii', $search, $limit, $offset);
     mysqli_stmt_execute($stmt);
     $result = mysqli_stmt_get_result($stmt);
     return mysqli_fetch_all($result, MYSQLI_ASSOC);
 }
 
-function getCountLotBySearch(mysqli $link, string $search): int {
-
+function getCountLotBySearch(mysqli $link, string $search): int
+{
     $sql = 'SELECT l.id, l.name AS lot_name, l.description, l.start_price, l.img_url, l.finished_at, c.name AS cat_name
             FROM lot l
             JOIN category c ON l.category_id = c.id
@@ -364,14 +398,15 @@ function getCountLotBySearch(mysqli $link, string $search): int {
     return count(mysqli_fetch_all($result, MYSQLI_ASSOC));
 }
 
-function createPagination(int $current, int $countLot, int $limit): array {
-  $countPage = (int)ceil($countLot/$limit); //Получаем кол-во страниц
+function createPagination(int $current, int $countLot, int $limit): array
+{
+    $countPage = (int)ceil($countLot/$limit); //Получаем кол-во страниц
   $pages = range(1, $countPage); //Создаём массив страниц
 
   $prev = ($current > 1) ? $current - 1 : $current;
-  $next = ($current < $countPage) ? $current + 1 : $current;
+    $next = ($current < $countPage) ? $current + 1 : $current;
 
-  return ['prevPage' => $prev,
+    return ['prevPage' => $prev,
           'nextPage' => $next,
           'countPage' => $countPage,
           'pages' => $pages,
@@ -380,33 +415,34 @@ function createPagination(int $current, int $countLot, int $limit): array {
          ];
 }
 
-function getPrice(array $sqlBidUser, array $sqlCatLot): array {
-   $currentPrice = empty($sqlBidUser) ? $sqlCatLot['start_price'] : $sqlCatLot['price'];
-   $minBid = $currentPrice + $sqlCatLot['step_price'];
+function getPrice(array $sqlBidUser, array $sqlCatLot): array
+{
+    $currentPrice = empty($sqlBidUser) ? $sqlCatLot['start_price'] : $sqlCatLot['price'];
+    $minBid = $currentPrice + $sqlCatLot['step_price'];
 
-   return ['currentPrice' => $currentPrice,
+    return ['currentPrice' => $currentPrice,
            'minBid' => $minBid
           ];
 }
 
-function validateFormLot(string $userPrice, array $price): string {
-
+function validateFormLot(string $userPrice, array $price): string
+{
     if (empty($userPrice)) { //Если пустое поле
         return 'Введите ставку';
     }
 
     if ((filter_var($userPrice, FILTER_VALIDATE_INT)) <= 0) { //Если не целое, не положительное число
-      return 'Введите целое положительное число';
+        return 'Введите целое положительное число';
     }
 
-    if ($userPrice <= $price['minBid']) { //Если меньше минимальной ставки
+    if ($userPrice < $price['minBid']) { //Если меньше минимальной ставки
         return 'Должно быть не менее '.$price['minBid'].'';
     }
     return '';
 }
 
-function addBid(mysqli $link, int $lotId, int $userPrice): bool {
-
+function addBid(mysqli $link, int $lotId, int $userPrice): bool
+{
     $data = ['user_id' => $_SESSION['user']['id'],
              'lot_id' => $lotId,
              'price' => $userPrice,
@@ -422,7 +458,8 @@ function addBid(mysqli $link, int $lotId, int $userPrice): bool {
     return mysqli_stmt_execute($stmt);
 }
 
-function getActiveBid(mysqli $link): array|null {
+function getActiveBid(mysqli $link): array|null
+{
     $userId = $_SESSION['user']['id'];
 
     $sql = 'SELECT  l.id AS lot_id, l.name AS lot_name, l.img_url, l.finished_at,
@@ -450,7 +487,8 @@ function getActiveBid(mysqli $link): array|null {
     }
 }
 
-function getFinishedBid(mysqli $link): array {
+function getFinishedBid(mysqli $link): array
+{
     $userId = $_SESSION['user']['id'];
 
     $sql = 'SELECT  l.id AS lot_id, l.name AS lot_name, l.img_url, l.finished_at,
@@ -478,7 +516,8 @@ function getFinishedBid(mysqli $link): array {
     }
 }
 
-function getWinnerBid(mysqli $link): array {
+function getWinnerBid(mysqli $link): array
+{
     $userId = $_SESSION['user']['id'];
 
     $sql = 'SELECT  l.id AS lot_id, l.name AS lot_name, l.img_url, l.finished_at,
@@ -499,7 +538,7 @@ function getWinnerBid(mysqli $link): array {
     $result = mysqli_stmt_get_result($stmt);
 
     if ($result) {
-         return mysqli_fetch_all($result, MYSQLI_ASSOC);
+        return mysqli_fetch_all($result, MYSQLI_ASSOC);
     } else {
         $error = mysqli_error($link);
         print("Error MySQL: " . $error);
@@ -507,7 +546,8 @@ function getWinnerBid(mysqli $link): array {
     }
 }
 
-function getLotWithoutWinner(mysqli $link): array {
+function getLotWithoutWinner(mysqli $link): array
+{
     $sql = 'SELECT id AS lot_id, name AS lot_name, winner_id
             FROM lot
             WHERE winner_id IS NULL AND finished_at <= NOW()';
@@ -520,7 +560,8 @@ function getLotWithoutWinner(mysqli $link): array {
     }
 }
 
-function getLastBid(mysqli $link, int $lotId): array {
+function getLastBid(mysqli $link, int $lotId): array
+{
     $sql = 'SELECT u.id AS user_id, u.name AS user_name, b.price AS max_price, b.lot_id AS lot_id
             FROM bid b
             JOIN user u ON b.user_id = u.id
@@ -533,14 +574,15 @@ function getLastBid(mysqli $link, int $lotId): array {
     $result = mysqli_stmt_get_result($stmt);
 
     if ($result) {
-        return mysqli_fetch_array($result, MYSQLI_ASSOC);
+        return mysqli_fetch_all($result, MYSQLI_ASSOC);
     } else {
         print("Error: Запрос не выполнен" . mysqli_error($link));
         exit();
     }
 }
 
-function updateWinner(mysqli $link, int $userId, int $lotId): void {
+function updateWinner(mysqli $link, int $userId, int $lotId): void
+{
     $sql = 'UPDATE lot SET winner_id = ? WHERE id = ?';
 
     $stmt = mysqli_prepare($link, $sql);
@@ -549,11 +591,12 @@ function updateWinner(mysqli $link, int $userId, int $lotId): void {
     if (!$result) {
         print("Error: Запрос не выполнен" . mysqli_error($link));
         exit();
-    } 
+    }
 }
 
-function getWinner(mysqli $link): array {
-    $sql = 'SELECT l.id AS lot_id, l.name, l.winner_id, u.name, u.email
+function getWinner(mysqli $link): array
+{
+    $sql = 'SELECT l.id AS lot_id, l.name AS lot_name, l.winner_id, u.name, u.email
             FROM lot l
             JOIN bid b ON l.winner_id = b.user_id
             JOIN user u ON b.user_id = u.id
@@ -568,8 +611,8 @@ function getWinner(mysqli $link): array {
     }
 }
 
-function getTime(array $sqlBid): array {
-
+function getTime(array $sqlBid): array
+{
     foreach ($sqlBid as $value => $key) {
         $time = time() - strtotime($sqlBid[$value]['created_at']);
         switch ($time) {
@@ -598,10 +641,113 @@ function getTime(array $sqlBid): array {
                 $minuteWord = get_noun_plural_form($time, 'год', 'года', 'лет');
                 $sqlBid[$value]['time'] = "{$time} {$minuteWord} назад";
         }
-        
     }
 
-   return $sqlBid;
+    return $sqlBid;
 }
 
-?>
+function getLotByCategory(mysqli $link, string $categoryName, int $limit, int $offset): array
+{
+    $sql = 'SELECT l.id AS id, l.name AS lot_name, l.start_price, l.img_url, l.finished_at,
+		           c.name AS cat_name, c.symbol_code
+            FROM lot l
+            JOIN category c ON c.id = l.category_id
+            WHERE l.finished_at > NOW() AND c.symbol_code = ?
+            ORDER BY l.created_at DESC LIMIT ? OFFSET ?';
+
+    $stmt = mysqli_prepare($link, $sql);
+    mysqli_stmt_bind_param($stmt, 'sii', $categoryName, $limit, $offset);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+
+    if ($result) {
+        return mysqli_fetch_all($result, MYSQLI_ASSOC);
+    } else {
+        print("Error: Запрос не выполнен" . mysqli_error($link));
+        exit();
+    }
+}
+
+function getCountLotByCategory(mysqli $link, string $categoryName): int
+{
+    $sql = 'SELECT l.id AS id, l.name AS lot_name, l.start_price, l.img_url, l.finished_at,
+		           c.name AS cat_name, c.symbol_code
+            FROM lot l
+            JOIN category c ON c.id = l.category_id
+            WHERE l.finished_at > NOW() AND c.symbol_code = ?
+            ORDER BY l.created_at DESC';
+
+    $stmt = db_get_prepare_stmt($link, $sql, [$categoryName]);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+
+    if ($result) {
+        return count(mysqli_fetch_all($result, MYSQLI_ASSOC));
+    } else {
+        print("Error: Запрос не выполнен" . mysqli_error($link));
+        exit();
+    }
+}
+
+function getLotByLotId(mysqli $link, int $lotId): array|null
+{
+    $sql = 'SELECT user_id FROM lot WHERE id = ?';
+
+    $stmt = mysqli_prepare($link, $sql);
+    mysqli_stmt_bind_param($stmt, 'i', $lotId);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+
+    if ($result) {
+        return mysqli_fetch_assoc($result);
+    } else {
+        $error = mysqli_error($link);
+        print("Error MySQL: " . $error);
+    }
+}
+
+function getlastBidUserById(mysqli $link, int $lotId): array|null
+{
+    $sql = 'SELECT u.id AS user_id
+            FROM bid b
+            JOIN user u ON b.user_id = u.id
+            WHERE b.lot_id = ?
+            ORDER BY b.created_at DESC';
+    $stmt = mysqli_prepare($link, $sql);
+    mysqli_stmt_bind_param($stmt, 'i', $lotId);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+
+    if ($result) {
+        return mysqli_fetch_assoc($result);
+    } else {
+        $error = mysqli_error($link);
+        print("Error MySQL: " . $error);
+    }
+}
+
+function checkAddLot(mysqli $link, int $lotId, string $userName, string $userId): bool
+{
+    $userId = (int)($userId);
+
+    $sqlBidUserByUserId = getlastBidUserById($link, $lotId);
+    $sqlLotByLotId = getLotByLotId($link, $lotId);
+
+    //Проверяем существует ли последняя ставка
+    $lastBid = isset($sqlBidUserByUserId) ? $sqlBidUserByUserId['user_id'] : false;
+    //срок размещения лота истёк
+    //Проверяем пользователь авторизован, лот не создан текущим пользователем, последняя ставка сделана не текущим пользователем
+    return (!empty($userName) && $lastBid !== $userId) && $sqlLotByLotId['user_id'] !== $userId;
+}
+
+function checkActiveLot(array $sqlPosters, int $lotId): bool
+{
+    $lotId = (string)$lotId;
+    foreach ($sqlPosters as $value => $key) {
+       if ($lotId === $key['id']) {
+           return true;
+       }
+    }
+    return false;
+}
+

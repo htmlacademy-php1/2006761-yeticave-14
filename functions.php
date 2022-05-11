@@ -84,7 +84,7 @@ function getPosters(mysqli $link): array
     $result = mysqli_query($link, $sql);
     if ($result) {
         return mysqli_fetch_all($result, MYSQLI_ASSOC);
-    } 
+    }
     print("Error MySQL: " . mysqli_error($link));
     exit();
 }
@@ -182,7 +182,6 @@ function addLot(mysqli $link, array $lot, array $files): bool
     }
     print("Error MySQL: " . mysqli_error($link));
     exit();
-
 }
 
 /**
@@ -384,7 +383,7 @@ function addUser(mysqli $link, array $registration): bool
 }
 
 /**
- * Проверяет email на корректность и не занят ли он 
+ * Проверяет email на корректность и не занят ли он
  *
  * @param $link mysqli Ресурс соединения
  * @param $registration array Данные из формы
@@ -588,7 +587,6 @@ function getLotBySearch(mysqli $link, string $search, int $limit, int $offset): 
     }
     print("Error MySQL: " . mysqli_error($link));
     exit();
-
 }
 
 /**
@@ -1096,10 +1094,9 @@ function checkActiveLot(array $sqlPosters, int $lotId): bool
 {
     $lotId = (string)$lotId;
     foreach ($sqlPosters as $value => $key) {
-       if ($lotId === $key['id']) {
-           return true;
-       }
+        if ($lotId === $key['id']) {
+            return true;
+        }
     }
     return false;
 }
-

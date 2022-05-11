@@ -9,7 +9,6 @@ $userName = getSessionName();
 
 //Проверяем, что была отправлена форма и получившаяся строка не пустая.
 if ($_SERVER['REQUEST_METHOD'] !== 'GET' || empty(trim($_GET['search']))) {
-
     $search = '';
 
     $pageContent = include_template(
@@ -33,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET' || empty(trim($_GET['search']))) {
 $currentPage = (int)($_GET['page'] ?? 1);
 
 //Смещение для запроса к БД
-$offset = LOT_LIMIT * ($currentPage - 1); 
+$offset = LOT_LIMIT * ($currentPage - 1);
 
 //Получаем значение поиска от пользователя
 $search = trim(filter_input(INPUT_GET, 'search'));

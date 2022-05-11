@@ -58,7 +58,8 @@ $pageContent = include_template(
 );
 
 $layoutContent = include_template(
-    'layout.php', [
+    'layout.php',
+    [
     'categories' => $sqlCategories,
     'content' => $pageContent,
     'title' => 'Страница лота',

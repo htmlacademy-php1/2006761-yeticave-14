@@ -8,8 +8,7 @@ $sqlCategories = getCategories($link);
 $userName = getSessionName();
 
 //Проверяем, что была отправлена форма и получившаяся строка не пустая.
-if ($_SERVER['REQUEST_METHOD'] !== 'GET' || empty(trim($_GET['categoryName']))) { 
-
+if ($_SERVER['REQUEST_METHOD'] !== 'GET' || empty(trim($_GET['categoryName']))) {
     $pageContent = include_template(
         'all-lots.php',
         ['sqlCategories' => $sqlCategories, ]
@@ -30,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET' || empty(trim($_GET['categoryName']))) 
 $currentPage = (int)($_GET['page'] ?? 1);
 
 //Смещение для запроса к БД
-$offset = LOT_LIMIT * ($currentPage - 1); 
+$offset = LOT_LIMIT * ($currentPage - 1);
 
 $categoryName = $_GET['categoryName'];
 $categoryName = mysqli_real_escape_string($link, $categoryName);
@@ -38,10 +37,10 @@ $categoryName = mysqli_real_escape_string($link, $categoryName);
 $sqlLotCategory = getLotByCategory($link, $categoryName, LOT_LIMIT, $offset);
 
 //Получаем кол-во найденных лотов
-$countLotFromSearch = getCountLotByCategory($link, $categoryName); 
+$countLotFromSearch = getCountLotByCategory($link, $categoryName);
 
 //Создаем пагинацию
-$pagination = createPagination($currentPage, $countLotFromSearch, LOT_LIMIT); 
+$pagination = createPagination($currentPage, $countLotFromSearch, LOT_LIMIT);
 
 $pageContent = include_template(
     'all-lots.php',

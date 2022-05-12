@@ -14,10 +14,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     //Получаем значения из формы
     $registration = filter_input_array(
         INPUT_POST,
-        ['email' => FILTER_DEFAULT,
-        'password' => FILTER_DEFAULT,
-        'name' => FILTER_DEFAULT,
-        'contacts' => FILTER_DEFAULT],
+        [
+            'email' => FILTER_DEFAULT,
+            'password' => FILTER_DEFAULT,
+            'name' => FILTER_DEFAULT,
+            'contacts' => FILTER_DEFAULT
+        ],
         true
     );
 
@@ -38,29 +40,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $pageContent = include_template(
         'sign-up.php',
-        ['sqlCategories' => $sqlCategories,
-        'errors' => $errors, ]
+        [
+            'sqlCategories' => $sqlCategories,
+            'errors' => $errors,
+        ]
     );
 
     $layoutContent = include_template(
         'layout.php',
-        ['categories' => $sqlCategories,
-        'content' => $pageContent,
-        'title' => 'Страница регистрации', ]
+        [
+            'categories' => $sqlCategories,
+            'content' => $pageContent,
+            'title' => 'Страница регистрации',
+        ]
     );
 
     print($layoutContent);
 } else {
     $pageContent = include_template(
         'sign-up.php',
-        ['sqlCategories' => $sqlCategories, ]
+        [
+            'sqlCategories' => $sqlCategories,
+        ]
     );
 
     $layoutContent = include_template(
         'layout.php',
-        ['categories' => $sqlCategories,
-        'content' => $pageContent,
-        'title' => 'Страница регистрации', ]
+        [
+            'categories' => $sqlCategories,
+            'content' => $pageContent,
+            'title' => 'Страница регистрации',
+        ]
     );
 
     print($layoutContent);

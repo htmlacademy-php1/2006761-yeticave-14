@@ -47,24 +47,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 $pageContent = include_template(
     'lot.php',
-    ['sqlCategories' => $sqlCategories,
-    'sqlCatLot' => $sqlCatLot,
-    'sqlBidUser' => $sqlBidUserByLotId,
-    'userName' => $userName,
-    'lotId' => $lotId,
-    'price' => $price,
-    'errors' => $errors,
-    'checkAddLot' => $checkAddLot, ]
+    [
+        'sqlCategories' => $sqlCategories,
+        'sqlCatLot' => $sqlCatLot,
+        'sqlBidUser' => $sqlBidUserByLotId,
+        'userName' => $userName,
+        'lotId' => $lotId,
+        'price' => $price,
+        'errors' => $errors,
+        'checkAddLot' => $checkAddLot,
+    ]
 );
 
 $layoutContent = include_template(
     'layout.php',
     [
-    'categories' => $sqlCategories,
-    'content' => $pageContent,
-    'title' => 'Страница лота',
-    'userName' => $userName,
-    'sqlCatLot' => $sqlCatLot, ]
+        'categories' => $sqlCategories,
+        'content' => $pageContent,
+        'title' => 'Страница лота',
+        'userName' => $userName,
+        'sqlCatLot' => $sqlCatLot,
+    ]
 );
 
 print($layoutContent);

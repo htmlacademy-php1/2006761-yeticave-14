@@ -24,18 +24,22 @@ $sqlWinnerBid = getTime($sqlWinnerBid);
 
 $pageContent = include_template(
     'my-bets.php',
-    ['sqlCategories' => $sqlCategories,
-    'sqlActiveBid' => $sqlActiveBid,
-    'sqlFinishedBid' => $sqlFinishedBid,
-    'sqlWinnerBid' => $sqlWinnerBid, ]
+    [
+        'sqlCategories' => $sqlCategories,
+        'sqlActiveBid' => $sqlActiveBid,
+        'sqlFinishedBid' => $sqlFinishedBid,
+        'sqlWinnerBid' => $sqlWinnerBid,
+    ]
 );
 
 $layoutContent = include_template(
     'layout.php',
-    ['categories' => $sqlCategories,
-    'content' => $pageContent,
-    'title' => 'Мои ставки',
-    'userName' => $userName, ]
+    [
+        'categories' => $sqlCategories,
+        'content' => $pageContent,
+        'title' => 'Мои ставки',
+        'userName' => $userName,
+    ]
 );
 
 print($layoutContent);

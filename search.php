@@ -13,16 +13,20 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET' || empty(trim($_GET['search']))) {
 
     $pageContent = include_template(
         'search.php',
-        ['sqlCategories' => $sqlCategories,
-        'search' => $search, ]
+        [
+            'sqlCategories' => $sqlCategories,
+            'search' => $search,
+        ]
     );
 
     $layoutContent = include_template(
         'layout.php',
-        ['categories' => $sqlCategories,
-        'content' => $pageContent,
-        'title' => 'Страница поиска',
-        'userName' => $userName, ]
+        [
+            'categories' => $sqlCategories,
+            'content' => $pageContent,
+            'title' => 'Страница поиска',
+            'userName' => $userName,
+        ]
     );
 
     print($layoutContent);
@@ -49,18 +53,22 @@ $countLotFromSearch = getCountLotBySearch($link, $search);
 $pagination = createPagination($currentPage, $countLotFromSearch, LOT_LIMIT);
 $pageContent = include_template(
     'search.php',
-    ['sqlCategories' => $sqlCategories,
-    'search' => $search,
-    'searchResult'=> $searchResult,
-    'pagination' => $pagination, ]
+    [
+        'sqlCategories' => $sqlCategories,
+        'search' => $search,
+        'searchResult'=> $searchResult,
+        'pagination' => $pagination,
+    ]
 );
 
 $layoutContent = include_template(
     'layout.php',
-    ['categories' => $sqlCategories,
-    'content' => $pageContent,
-    'title' => 'Страница поиска',
-    'userName' => $userName, ]
+    [
+        'categories' => $sqlCategories,
+        'content' => $pageContent,
+        'title' => 'Страница поиска',
+        'userName' => $userName,
+    ]
 );
 
 print($layoutContent);

@@ -510,10 +510,12 @@ function errorPage(array $sqlCategories, string $userName): void
 
     $layoutContent = include_template(
         'layout.php',
-        ['content' => $pageContent,
-        'categories' => $sqlCategories,
-        'title' => 'Доступ запрещен',
-        'userName' => $userName, ]
+        [
+            'content' => $pageContent,
+            'categories' => $sqlCategories,
+            'title' => 'Доступ запрещен',
+            'userName' => $userName,
+        ]
     );
 
     print($layoutContent);
@@ -532,16 +534,20 @@ function notFoundPage(array $sqlCategories, string $userName): void
 {
     $pageContent = include_template(
         '404.php',
-        ['sqlCategories' => $sqlCategories,
-         'userName' => $userName, ]
+        [
+            'sqlCategories' => $sqlCategories,
+            'userName' => $userName,
+        ]
     );
 
     $layoutContent = include_template(
         'layout.php',
-        ['content' => $pageContent,
-        'categories' => $sqlCategories,
-        'title' => 'Страница не найдена',
-        'userName' => $userName, ]
+        [
+            'content' => $pageContent,
+            'categories' => $sqlCategories,
+            'title' => 'Страница не найдена',
+            'userName' => $userName,
+        ]
     );
 
     print($layoutContent);

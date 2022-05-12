@@ -16,14 +16,18 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
     $pageContent = include_template(
         'login.php',
-        ['sqlCategories' => $sqlCategories, ]
+        [
+            'sqlCategories' => $sqlCategories,
+        ]
     );
 
     $layoutContent = include_template(
         'layout.php',
-        ['categories' => $sqlCategories,
-        'content' => $pageContent,
-        'title' => 'Страница входа', ]
+        [
+            'categories' => $sqlCategories,
+            'content' => $pageContent,
+            'title' => 'Страница входа',
+        ]
     );
 
     print($layoutContent);
@@ -32,8 +36,10 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 $login = filter_input_array(
     INPUT_POST,
-    ['email' => FILTER_DEFAULT,
-    'password' => FILTER_DEFAULT],
+    [
+        'email' => FILTER_DEFAULT,
+        'password' => FILTER_DEFAULT
+    ],
     true
 );
 
@@ -52,15 +58,19 @@ if (empty($errors) && $user) {
         
 $pageContent = include_template(
     'login.php',
-    ['sqlCategories' => $sqlCategories,
-    'errors' => $errors, ]
+    [
+        'sqlCategories' => $sqlCategories,
+        'errors' => $errors,
+    ]
 );
 
 $layoutContent = include_template(
     'layout.php',
-    ['categories' => $sqlCategories,
-    'content' => $pageContent,
-    'title' => 'Страница входа', ]
+    [
+        'categories' => $sqlCategories,
+        'content' => $pageContent,
+        'title' => 'Страница входа',
+    ]
 );
 
 print($layoutContent);

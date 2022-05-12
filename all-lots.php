@@ -11,15 +11,19 @@ $userName = getSessionName();
 if ($_SERVER['REQUEST_METHOD'] !== 'GET' || empty(trim($_GET['categoryName']))) {
     $pageContent = include_template(
         'all-lots.php',
-        ['sqlCategories' => $sqlCategories, ]
+        [
+        'sqlCategories' => $sqlCategories,
+        ]
     );
 
     $layoutContent = include_template(
         'layout.php',
-        ['categories' => $sqlCategories,
+        [
+        'categories' => $sqlCategories,
         'content' => $pageContent,
         'title' => 'Лоты по категории',
-        'userName' => $userName, ]
+        'userName' => $userName,
+        ]
     );
 
     print($layoutContent);
@@ -44,19 +48,23 @@ $pagination = createPagination($currentPage, $countLotFromSearch, LOT_LIMIT);
 
 $pageContent = include_template(
     'all-lots.php',
-    ['sqlCategories' => $sqlCategories,
+    [
+    'sqlCategories' => $sqlCategories,
     'categoryName' => $categoryName,
     'sqlLotCategory' => $sqlLotCategory,
-    'pagination' => $pagination, ]
+    'pagination' => $pagination,
+    ]
 );
 
 $layoutContent = include_template(
     'layout.php',
-    ['categories' => $sqlCategories,
+    [
+    'categories' => $sqlCategories,
     'content' => $pageContent,
     'title' => 'Лоты по категории',
     'userName' => $userName,
-    'sqlCatLot' => $sqlLotCategory, ]
+    'sqlCatLot' => $sqlLotCategory,
+    ]
 );
 
 print($layoutContent);

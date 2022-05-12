@@ -12,12 +12,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     //Получаем значения из формы
     $lot = filter_input_array(
         INPUT_POST,
-        ['name' => FILTER_DEFAULT,
+        [
+        'name' => FILTER_DEFAULT,
         'category_id' => FILTER_DEFAULT,
         'description' => FILTER_DEFAULT,
         'start_price' => FILTER_DEFAULT,
         'step_price' => FILTER_DEFAULT,
-        'finished_at' => FILTER_DEFAULT ],
+        'finished_at' => FILTER_DEFAULT
+        ],
         true
     );
 
@@ -39,31 +41,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $pageContent = include_template(
         'add.php',
-        ['sqlCategories' => $sqlCategories,
-        'errors' => $errors, ]
+        [
+        'sqlCategories' => $sqlCategories,
+        'errors' => $errors,
+        ]
     );
 
     $layoutContent = include_template(
         'layout.php',
-        ['categories' => $sqlCategories,
+        [
+        'categories' => $sqlCategories,
         'content' => $pageContent,
         'title' => 'Добавление лота',
-        'userName' => $userName, ]
+        'userName' => $userName,
+        ]
     );
 
     print($layoutContent);
 } else {
     $pageContent = include_template(
         'add.php',
-        ['sqlCategories' => $sqlCategories, ]
+        [
+            'sqlCategories' => $sqlCategories,
+        ]
     );
 
     $layoutContent = include_template(
         'layout.php',
-        ['categories' => $sqlCategories,
-        'content' => $pageContent,
-        'title' => 'Добавление лота',
-        'userName' => $userName, ]
+        [
+            'categories' => $sqlCategories,
+            'content' => $pageContent,
+            'title' => 'Добавление лота',
+            'userName' => $userName,
+        ]
     );
 
     print($layoutContent);

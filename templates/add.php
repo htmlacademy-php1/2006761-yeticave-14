@@ -1,4 +1,5 @@
-<nav class="nav">
+<main>
+    <nav class="nav">
       <ul class="nav__list container">
       <?php foreach ($sqlCategories as $value):?>
         <li class="nav__item">
@@ -71,3 +72,4 @@
       <span class="form__error form__error--bottom">Пожалуйста, исправьте ошибки в форме.</span>
       <button type="submit" class="button">Добавить лот</button>
     </form>
+</main>

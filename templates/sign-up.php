@@ -1,3 +1,4 @@
+<main>
     <nav class="nav">
       <ul class="nav__list container">
         <?php foreach ($sqlCategories as $value):?>
@@ -39,3 +40,4 @@
       <button type="submit" class="button">Зарегистрироваться</button>
       <a class="text-link" href="#">Уже есть аккаунт</a>
     </form>
+</main>

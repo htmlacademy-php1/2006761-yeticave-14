@@ -1,6 +1,6 @@
 <?php
 
-require_once('boot.php');
+require_once 'boot.php';
 
 $sqlCategories = getCategories($link);
 $userName = getSessionName();
@@ -12,12 +12,16 @@ if (!empty($userName)) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     //Получаем значения из формы
-    $registration = filter_input_array(INPUT_POST, [
-        'email' => FILTER_DEFAULT,
-        'password' => FILTER_DEFAULT,
-        'name' => FILTER_DEFAULT,
-        'contacts' => FILTER_DEFAULT
-    ], true);
+    $registration = filter_input_array(
+        INPUT_POST,
+        [
+            'email' => FILTER_DEFAULT,
+            'password' => FILTER_DEFAULT,
+            'name' => FILTER_DEFAULT,
+            'contacts' => FILTER_DEFAULT
+        ],
+        true
+    );
 
     $errors = validateFormSignUp($link, $registration);
 
@@ -34,28 +38,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    $pageContent = include_template('sign-up.php', [
-        'sqlCategories' => $sqlCategories,
-        'errors' => $errors,
-    ]);
+    $pageContent = include_template(
+        'sign-up.php',
+        [
+            'sqlCategories' => $sqlCategories,
+            'errors' => $errors,
+        ]
+    );
 
-    $layoutContent = include_template('layout.php', [
-        'categories' => $sqlCategories,
-        'content' => $pageContent,
-        'title' => 'Страница регистрации',
-    ]);
+    $layoutContent = include_template(
+        'layout.php',
+        [
+            'categories' => $sqlCategories,
+            'content' => $pageContent,
+            'title' => 'Страница регистрации',
+        ]
+    );
 
     print($layoutContent);
 } else {
-    $pageContent = include_template('sign-up.php', [
-        'sqlCategories' => $sqlCategories,
-    ]);
+    $pageContent = include_template(
+        'sign-up.php',
+        [
+            'sqlCategories' => $sqlCategories,
+        ]
+    );
 
-    $layoutContent = include_template('layout.php', [
-        'categories' => $sqlCategories,
-        'content' => $pageContent,
-        'title' => 'Страница регистрации',
-    ]);
+    $layoutContent = include_template(
+        'layout.php',
+        [
+            'categories' => $sqlCategories,
+            'content' => $pageContent,
+            'title' => 'Страница регистрации',
+        ]
+    );
 
     print($layoutContent);
 }

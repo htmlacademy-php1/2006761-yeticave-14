@@ -12,5 +12,8 @@
     "require": {
         "symfony/mailer": "^6.0",
         "friendsofphp/php-cs-fixer": "^3.8"
+    },
+    "require-dev": {
+        "phpmd/phpmd": "^2.12"
     }
 }

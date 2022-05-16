@@ -12,3 +12,4 @@ uploads/*
 .vs
 img/*
 *.php-cs-fixer.cache
+*phpmd.xml

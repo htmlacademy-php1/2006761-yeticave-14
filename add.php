@@ -1,6 +1,6 @@
 <?php
 
-require_once('boot.php');
+require_once 'boot.php';
 
 $sqlCategories = getCategories($link);
 $userName = getSessionName();
@@ -10,14 +10,18 @@ if (empty($userName)) {
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     //Получаем значения из формы
-    $lot = filter_input_array(INPUT_POST, [
+    $lot = filter_input_array(
+        INPUT_POST,
+        [
         'name' => FILTER_DEFAULT,
         'category_id' => FILTER_DEFAULT,
         'description' => FILTER_DEFAULT,
         'start_price' => FILTER_DEFAULT,
         'step_price' => FILTER_DEFAULT,
         'finished_at' => FILTER_DEFAULT
-    ], true);
+        ],
+        true
+    );
 
     $categoriesId = array_column($sqlCategories, 'id');
     $errors = validateFormAdd($lot, $categoriesId, $_FILES);
@@ -35,30 +39,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    $pageContent = include_template('add.php', [
+    $pageContent = include_template(
+        'add.php',
+        [
         'sqlCategories' => $sqlCategories,
         'errors' => $errors,
-    ]);
+        ]
+    );
 
-    $layoutContent = include_template('layout.php', [
+    $layoutContent = include_template(
+        'layout.php',
+        [
         'categories' => $sqlCategories,
         'content' => $pageContent,
         'title' => 'Добавление лота',
         'userName' => $userName,
-    ]);
+        ]
+    );
 
     print($layoutContent);
 } else {
-    $pageContent = include_template('add.php', [
-        'sqlCategories' => $sqlCategories,
-    ]);
+    $pageContent = include_template(
+        'add.php',
+        [
+            'sqlCategories' => $sqlCategories,
+        ]
+    );
 
-    $layoutContent = include_template('layout.php', [
-        'categories' => $sqlCategories,
-        'content' => $pageContent,
-        'title' => 'Добавление лота',
-        'userName' => $userName,
-    ]);
+    $layoutContent = include_template(
+        'layout.php',
+        [
+            'categories' => $sqlCategories,
+            'content' => $pageContent,
+            'title' => 'Добавление лота',
+            'userName' => $userName,
+        ]
+    );
 
     print($layoutContent);
 }

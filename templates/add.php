@@ -1,7 +1,7 @@
 <main>
     <nav class="nav">
       <ul class="nav__list container">
-      <?php foreach ($sqlCategories as $value):?>
+      <?php foreach ($sqlCategories as $value) :?>
         <li class="nav__item">
           <a href="all-lots.php?categoryName=<?=$value['symbol_code']?>"><?=$value['name'] ?></a>
         </li>
@@ -9,13 +9,15 @@
       </ul>
     </nav>
     <?php $className = !empty($errors) ? 'form--invalid' : '' ?>
-    <form class="form form--add-lot container <?=$className; ?>" action="add.php" method="POST" enctype="multipart/form-data"> <!-- form--invalid -->
+    <form class="form form--add-lot container <?=$className; ?>" action="add.php" method="POST"
+          enctype="multipart/form-data"> <!-- form--invalid -->
       <h2>Добавление лота</h2>
       <div class="form__container-two">
       <?php $className = isset($errors['name']) ? 'form__item--invalid' : '' ?>
         <div class="form__item <?=$className; ?>"> <!-- form__item--invalid -->
           <label for="lot-name">Наименование <sup>*</sup></label>
-          <input id="lot-name" type="text" name="name" placeholder="Введите наименование лота" value="<?=getPostVal('name'); ?>">
+          <input id="lot-name" type="text" name="name" placeholder="Введите наименование лота"
+                 value="<?=htmlspecialchars(getPostVal('name'))?>">
           <span class="form__error"><?=isset($errors['name']) ? $errors['name'] : '' ?></span>
         </div>
          <?php $className = isset($errors['category_id']) ? 'form__item--invalid' : '' ?>
@@ -24,9 +26,11 @@
           <select id="category" name="category_id">
             <option>Выберите категорию</option>
             <?php foreach ($sqlCategories as $value) : ?>
-            <option value="<?=$value['id']; ?>"
-                <?php if ($value['id'] === getPostVal('category_id')): ?>selected<?php endif; ?>>
-                <?=$value['name'];?></option>
+            <option value="<?=htmlspecialchars($value['id'])?>"
+                <?php if (htmlspecialchars($value['id']) === htmlspecialchars(getPostVal('category_id'))) :?>
+                selected
+                <?php endif;?>>
+                <?=htmlspecialchars($value['name'])?></option>
             <?php endforeach; ?>
           </select>
           <span class="form__error"><?=isset($errors['category_id']) ? $errors['category_id'] : '' ?></span>
@@ -35,7 +39,8 @@
        <?php $className = isset($errors['description']) ? 'form__item--invalid' : '' ?>
       <div class="form__item form__item--wide <?=$className; ?>">
         <label for="message">Описание <sup>*</sup></label>
-        <textarea id="message" name="description" placeholder="Напишите описание лота"><?=getPostVal('description'); ?></textarea>
+        <textarea id="message" name="description"
+                  placeholder="Напишите описание лота"><?=htmlspecialchars(getPostVal('description'))?></textarea>
         <span class="form__error"><?=isset($errors['description']) ? $errors['description'] : '' ?></span>
       </div>
       <?php $className = isset($errors['img_url']) ? 'form__item--invalid' : '' ?>
@@ -53,19 +58,23 @@
       <?php $className = isset($errors['start_price']) ? 'form__item--invalid' : '' ?>
         <div class="form__item form__item--small <?=$className; ?>">
           <label for="lot-rate">Начальная цена <sup>*</sup></label>
-          <input id="lot-rate" type="text" name="start_price" value="<?=getPostVal('start_price'); ?>" placeholder="0">
+          <input id="lot-rate" type="text" name="start_price" value="<?=htmlspecialchars(getPostVal('start_price'))?>"
+                 placeholder="0">
           <span class="form__error"><?=isset($errors['start_price']) ? $errors['start_price'] : '' ?></span>
         </div>
         <?php $className = isset($errors['step_price']) ? 'form__item--invalid' : '' ?>
         <div class="form__item form__item--small <?=$className; ?>">
           <label for="lot-step">Шаг ставки <sup>*</sup></label>
-          <input id="lot-step" type="text" name="step_price" value="<?=getPostVal('step_price'); ?>" placeholder="0">
+          <input id="lot-step" type="text" name="step_price" value="<?=htmlspecialchars(getPostVal('step_price'))?>"
+                 placeholder="0">
           <span class="form__error"><?=isset($errors['step_price']) ? $errors['step_price'] : '' ?></span>
         </div>
         <?php $className = isset($errors['finished_at']) ? 'form__item--invalid' : '' ?>
         <div class="form__item <?=$className; ?>"">
           <label for="lot-date">Дата окончания торгов <sup>*</sup></label>
-          <input class="form__input-date" id="lot-date" type="text" name="finished_at" value="<?=getPostVal('finished_at'); ?>" placeholder="Введите дату в формате ГГГГ-ММ-ДД">
+          <input class="form__input-date" id="lot-date" type="text" name="finished_at"
+                 value="<?=htmlspecialchars(getPostVal('finished_at'))?>"
+                 placeholder="Введите дату в формате ГГГГ-ММ-ДД">
           <span class="form__error"><?=isset($errors['finished_at']) ? $errors['finished_at'] : '' ?></span>
         </div>
       </div>

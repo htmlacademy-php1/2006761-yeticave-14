@@ -1,7 +1,7 @@
 <main>
     <nav class="nav">
         <ul class="nav__list container">
-        <?php foreach ($sqlCategories as $value):?>
+        <?php foreach ($sqlCategories as $value) :?>
         <li class="nav__item">
             <a href="all-lots.php?categoryName=<?=$value['symbol_code']?>"><?=$value['name'] ?></a>
         </li>
@@ -16,7 +16,7 @@
         <?php $className = isset($errors['email']) ? 'form__item--invalid' : '' ?>
         <div class="form__item <?=$className; ?>"> <!-- form__item--invalid -->
         <label for="email">E-mail <sup>*</sup></label>
-        <input id="email" type="text" name="email" value="<?=getPostVal('email'); ?>" placeholder="Введите e-mail">
+        <input id="email" type="text" name="email" value="<?=htmlspecialchars(getPostVal('email')); ?>" placeholder="Введите e-mail">
         <span class="form__error"><?=isset($errors['email']) ? $errors['email'] : '' ?></span>
         </div>
 

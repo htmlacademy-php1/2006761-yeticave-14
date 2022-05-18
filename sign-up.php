@@ -10,15 +10,14 @@ if (!empty($userName)) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
     //Получаем значения из формы
     $registration = filter_input_array(
         INPUT_POST,
         [
-            'email' => FILTER_DEFAULT,
-            'password' => FILTER_DEFAULT,
-            'name' => FILTER_DEFAULT,
-            'contacts' => FILTER_DEFAULT
+            'email' => FILTER_SANITIZE_FULL_SPECIAL_CHARS,
+            'password' => FILTER_SANITIZE_FULL_SPECIAL_CHARS,
+            'name' => FILTER_SANITIZE_FULL_SPECIAL_CHARS,
+            'contacts' => FILTER_SANITIZE_FULL_SPECIAL_CHARS
         ],
         true
     );
@@ -29,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $errors = array_filter($errors);
 
     if (empty($errors)) {
-        $registration['password'] = password_hash($registration['password'], PASSWORD_DEFAULT);
+        $registration['password'] = (password_hash($registration['password'], PASSWORD_DEFAULT));
         $result = addUser($link, $registration);
         if ($result) {
             header("Location: login.php");

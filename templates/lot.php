@@ -47,7 +47,6 @@
             </form>
             </div>
             <?php endif; ?>
-
             
             <div class="history">
             <h3>История ставок (<span><?=count($sqlBidUser)?></span>)</h3>

@@ -11,6 +11,7 @@ $sqlPosters = getPosters($link);
 
 //Если лота не существует
 if (empty($sqlCatLot) || $sqlCatLot === null) {
+
     notFoundPage($sqlCategories, $userName);
 }
 
@@ -29,6 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     }
     // Получаем значение из формы и проверяем что значение целое
+
     $userPrice = (int)trim(filter_input(INPUT_POST, 'cost', FILTER_SANITIZE_FULL_SPECIAL_CHARS));
 
     $errors = validateFormLot($userPrice, $price);

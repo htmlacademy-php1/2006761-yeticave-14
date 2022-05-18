@@ -177,7 +177,6 @@ function addLot(mysqli $link, array $lot, array $files): bool
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
 
     $stmt = db_get_prepare_stmt($link, $sql, $lot);
-
     $result = mysqli_stmt_execute($stmt);
     if ($result) {
         return $result;

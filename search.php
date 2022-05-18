@@ -35,8 +35,6 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET' || empty(trim($_GET['search']))) {
 
 $currentPage = (int)($_GET['page'] ?? 1);
 
-
-
 //Смещение для запроса к БД
 $offset = LOT_LIMIT * ($currentPage - 1);
 

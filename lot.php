@@ -11,7 +11,6 @@ $sqlPosters = getPosters($link);
 
 //Если лота не существует
 if (empty($sqlCatLot) || $sqlCatLot === null) {
-
     notFoundPage($sqlCategories, $userName);
 }
 

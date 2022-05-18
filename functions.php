@@ -296,10 +296,10 @@ function validateCategory(string $ids, array $allowedList): ?string
  */
 function validateValue(string $value): ?string
 {
-    $value = intval($value);
-    if ($value <= 0) {
-        return 'Значение должно быть больше нуля';
+    if ((filter_var($value, FILTER_VALIDATE_INT)) <= 0) {
+        return 'Введите целое положительное число';
     }
+
     return null;
 }
 

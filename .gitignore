@@ -13,3 +13,5 @@ uploads/*
 img/*
 *.php-cs-fixer.cache
 *phpmd.xml
+*phpcs.xml
+*psalm.xml

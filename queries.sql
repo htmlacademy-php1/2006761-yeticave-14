@@ -9,15 +9,15 @@ INSERT INTO user (name, password, contacts, email) VALUES
 ('Григорий', 'qwerty', '123-456', 'grisha@ya.ru'),
 ('Владимир', 'qwerty2', '789-102', 'vova@ya.ru');
 INSERT INTO lot (user_id, winner_id, category_id, name, description, img_url, start_price, step_price, created_at, finished_at) VALUES
-('1', '1', '1', '2014 Rossignol District Snowboard', 'Крутая доска', 'img/lot-1.jpg', '10999', '1000', CURRENT_TIMESTAMP, '2022-06-15'),
-('2', '2', '1', 'DC Ply Mens 2016/2017 Snowboard', 'Ещё круче доска', 'img/lot-2.jpg', '159999', '1000', CURRENT_TIMESTAMP, '2022-06-16'),
-('2', '2', '2', 'Крепления Union Contact Pro 2015 года размер L/XL', 'Крутое крепление', 'img/lot-3.jpg', '8000', '1000', CURRENT_TIMESTAMP, '2022-06-17'),
-('1', '1', '3', 'Ботинки для сноуборда DC Mutiny Charocal', 'Крутые ботинки', 'img/lot-4.jpg', '10999', '1000', CURRENT_TIMESTAMP, '2022-06-18'),
-('2', '1', '4', 'Куртка для сноуборда DC Mutiny Charocal', 'Крутая куртка', 'img/lot-5.jpg', '7500', '1000', CURRENT_TIMESTAMP, '2022-06-19'),
-('1', '2', '6', 'Маска Oakley Canopy', 'Крутая маска', 'img/lot-6.jpg', '5400', '1000', CURRENT_TIMESTAMP, '2022-06-21');
+('1', '0', '1', '2014 Rossignol District Snowboard', 'Крутая доска', 'img/lot-1.jpg', '10999', '1000', CURRENT_TIMESTAMP, '2022-08-08'),
+('2', '0', '1', 'DC Ply Mens 2016/2017 Snowboard', 'Ещё круче доска', 'img/lot-2.jpg', '159999', '1000', CURRENT_TIMESTAMP, '2022-08-07'),
+('2', '0', '2', 'Крепления Union Contact Pro 2015 года размер L/XL', 'Крутое крепление', 'img/lot-3.jpg', '8000', '1000', CURRENT_TIMESTAMP, '2022-07-04'),
+('1', '0', '3', 'Ботинки для сноуборда DC Mutiny Charocal', 'Крутые ботинки', 'img/lot-4.jpg', '10999', '1000', CURRENT_TIMESTAMP, '2022-06-03'),
+('2', '0', '4', 'Куртка для сноуборда DC Mutiny Charocal', 'Крутая куртка', 'img/lot-5.jpg', '7500', '1000', CURRENT_TIMESTAMP, '2022-06-02'),
+('1', '0', '6', 'Маска Oakley Canopy', 'Крутая маска', 'img/lot-6.jpg', '5400', '1000', CURRENT_TIMESTAMP, '2022-07-01');
 INSERT INTO bid (user_id, lot_id, price) VALUES
-('1', '1', '11999'),
-('2', '2', '160999');
+('1', '2', '160999'),
+('2', '1', '11999');
 
 -- Получить все категории;
 SELECT name FROM category;

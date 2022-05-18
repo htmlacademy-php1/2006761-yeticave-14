@@ -35,12 +35,13 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET' || empty(trim($_GET['search']))) {
 
 $currentPage = (int)($_GET['page'] ?? 1);
 
+
+
 //Смещение для запроса к БД
 $offset = LOT_LIMIT * ($currentPage - 1);
 
 //Получаем значение поиска от пользователя
-$search = trim(filter_input(INPUT_GET, 'search'));
-$search = mysqli_real_escape_string($link, $search);
+$search = trim(filter_input(INPUT_GET, 'search', FILTER_SANITIZE_SPECIAL_CHARS));
 
 if (empty($searchResult = getLotBySearch($link, $search, LOT_LIMIT, $offset))) {
     $search = 'Ничего не найдено';
@@ -51,12 +52,18 @@ $countLotFromSearch = getCountLotBySearch($link, $search);
 
 //Создаем пагинацию
 $pagination = createPagination($currentPage, $countLotFromSearch, LOT_LIMIT);
+
+//Ошибка 404, если текущей страницы не существует
+if (!in_array($currentPage, $pagination['pages'])) {
+    notFoundPage($sqlCategories, $userName);
+}
+
 $pageContent = include_template(
     'search.php',
     [
         'sqlCategories' => $sqlCategories,
         'search' => $search,
-        'searchResult'=> $searchResult,
+        'searchResult' => $searchResult,
         'pagination' => $pagination,
     ]
 );

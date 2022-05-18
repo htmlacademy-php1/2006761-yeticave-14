@@ -5,9 +5,7 @@ require_once 'boot.php';
 $sqlCategories = getCategories($link);
 $userName = getSessionName();
 
-
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-
     //Если уже авторизован
     if (!empty($userName)) {
         header('Location: /');
@@ -37,8 +35,8 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 $login = filter_input_array(
     INPUT_POST,
     [
-        'email' => FILTER_DEFAULT,
-        'password' => FILTER_DEFAULT
+        'email' => FILTER_SANITIZE_FULL_SPECIAL_CHARS,
+        'password' => FILTER_SANITIZE_FULL_SPECIAL_CHARS
     ],
     true
 );
@@ -55,7 +53,7 @@ if (empty($errors) && $user) {
         $errors['password'] = 'Вы ввели неверный пароль';
     }
 }
-        
+
 $pageContent = include_template(
     'login.php',
     [

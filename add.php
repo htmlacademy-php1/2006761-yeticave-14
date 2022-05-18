@@ -13,12 +13,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $lot = filter_input_array(
         INPUT_POST,
         [
-        'name' => FILTER_DEFAULT,
-        'category_id' => FILTER_DEFAULT,
-        'description' => FILTER_DEFAULT,
-        'start_price' => FILTER_DEFAULT,
-        'step_price' => FILTER_DEFAULT,
-        'finished_at' => FILTER_DEFAULT
+        'name' => FILTER_SANITIZE_FULL_SPECIAL_CHARS,
+        'category_id' => FILTER_SANITIZE_FULL_SPECIAL_CHARS,
+        'description' => FILTER_SANITIZE_FULL_SPECIAL_CHARS,
+        'start_price' => FILTER_SANITIZE_FULL_SPECIAL_CHARS,
+        'step_price' => FILTER_SANITIZE_FULL_SPECIAL_CHARS,
+        'finished_at' => FILTER_SANITIZE_FULL_SPECIAL_CHARS
         ],
         true
     );

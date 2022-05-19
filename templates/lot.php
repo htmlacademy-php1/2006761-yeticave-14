@@ -3,7 +3,7 @@
         <ul class="nav__list container">
         <?php foreach ($sqlCategories as $value) :?>
             <li class="nav__item <?=$value['symbol_code'] === $sqlCatLot['symbol_code'] ? 'nav__item--current' : ''?>">
-                <a href="all-lots.php?categoryName=<?=$value['symbol_code']?>"><?=$value['name']?></a>
+                <a href="all-lots.php?categoryName=<?=$value['symbol_code']?>"><?=htmlspecialchars($value['name'])?></a>
             </li>
         <?php endforeach;?>
         </ul>
@@ -23,16 +23,16 @@
         
             <?php if ($checkAddLot && $checkActiveLot) : ?>
             <div class="lot-item__state">
-            <div class="lot-item__timer timer  <?=oneHourTimerFinishing($sqlCatLot['finished_at'])?>">
-                <?=formatTimer($sqlCatLot['finished_at'])?>
+            <div class="lot-item__timer timer  <?=oneHourTimerFinishing(htmlspecialchars($sqlCatLot['finished_at']))?>">
+                <?=formatTimer(htmlspecialchars($sqlCatLot['finished_at']))?>
             </div>
             <div class="lot-item__cost-state">
                 <div class="lot-item__rate">
                 <span class="lot-item__amount">Текущая цена</span>
-                <span class="lot-item__cost"><?=priceModify($price['currentPrice'])?></span>
+                <span class="lot-item__cost"><?=priceModify(htmlspecialchars($price['currentPrice']))?></span>
                 </div>
                 <div class="lot-item__min-cost">
-                Мин. ставка <span><?=priceModify($price['minBid'])?></span>
+                Мин. ставка <span><?=priceModify(htmlspecialchars($price['minBid']))?></span>
                 </div>
             </div>
         
@@ -40,7 +40,7 @@
                 <?php $className = !empty($errors) ? 'form__item--invalid' : '' ?>
                 <p class="lot-item__form-item form__item <?=$className; ?>">
                 <label for="cost">Ваша ставка</label>
-                <input id="cost" type="text" name="cost" placeholder="<?=priceModify($price['minBid'])?>">
+                <input id="cost" type="text" name="cost" placeholder="<?=priceModify(htmlspecialchars($price['minBid']))?>">
                 <span class="form__error"><?=isset($errors) ? $errors : '' ?></span>
                 </p>
                 <button type="submit" class="button">Сделать ставку</button>
@@ -54,7 +54,7 @@
                 <?php foreach ($sqlBidUser as $value) : ?>
                 <tr class="history__item">
                 <td class="history__name"><?=htmlspecialchars($value['user_name'])?></td>
-                <td class="history__price"><?=priceModify($value['price'])?></td>
+                <td class="history__price"><?=priceModify(htmlspecialchars($value['price']))?></td>
                 <td class="history__time"><?=htmlspecialchars($value['time'])?></td>
                 </tr>
                 <?php endforeach; ?>

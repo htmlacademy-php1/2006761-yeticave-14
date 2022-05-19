@@ -3,7 +3,7 @@
         <ul class="nav__list container">
         <?php foreach ($sqlCategories as $value) :?>
         <li class="nav__item">
-            <a href="all-lots.php?categoryName=<?=$value['symbol_code']?>"><?=$value['name'] ?></a>
+            <a href="all-lots.php?categoryName=<?=$value['symbol_code']?>"><?=htmlspecialchars($value['name'])?></a>
         </li>
         <?php endforeach;?>
         </ul>
@@ -26,13 +26,14 @@
                 <?=htmlspecialchars($value['cat_name'])?>
                 </td>
                 <td class="rates__timer">
-                <div class="timer <?=oneHourTimerFinishing($value['finished_at']); ?>"><?=formatTimer($value['finished_at'])?></div>
+                <div class="timer <?=oneHourTimerFinishing(htmlspecialchars($value['finished_at']))?>">
+                <?=formatTimer(htmlspecialchars($value['finished_at']))?></div>
                 </td>
                 <td class="rates__price">
-                <?=priceModify($value['price'])?>
+                <?=priceModify(htmlspecialchars($value['price']))?>
                 </td>
                 <td class="rates__time">
-                <?=$value['time'];?>
+                <?=htmlspecialchars($value['time'])?>
                 </td>
             </tr>
             <?php endforeach;?>
@@ -58,7 +59,7 @@
                 <div class="timer timer--win">Ставка выиграла</div>
                 </td>
                 <td class="rates__price">
-                <?=priceModify($value['price'])?>
+                <?=priceModify(htmlspecialchars($value['price']))?>
                 </td>
                 <td class="rates__time">
                 <?=htmlspecialchars($value['time'])?>
@@ -83,7 +84,7 @@
                 <div class="timer timer--end">Торги окончены</div>
                 </td>
                 <td class="rates__price">
-                <?=priceModify($value['price']);?>
+                <?=priceModify(htmlspecialchars($value['price']))?>
                 </td>
                 <td class="rates__time">
                 <?=htmlspecialchars($value['time'])?>

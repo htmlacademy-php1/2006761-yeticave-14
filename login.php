@@ -6,7 +6,6 @@ $sqlCategories = getCategories($link);
 $userName = getSessionName();
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-  
     //Если уже авторизован
     if (!empty($userName)) {
         header('Location: /');

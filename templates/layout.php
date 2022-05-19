@@ -26,7 +26,7 @@
         <!-- здесь должен быть PHP код для показа меню и данных пользователя -->
             <?php if (!empty($userName)) : ?>
                 <div class="user-menu__logged">
-                    <p><?=$userName; ?></p>
+                    <p><?=htmlspecialchars($userName)?></p>
                     <a class="user-menu__bets" href="/my-bets.php">Мои ставки</a>
                     <a class="user-menu__logout" href="/logout.php">Выход</a>
                 </div>
@@ -54,7 +54,7 @@
             <!--заполните этот список из массива категорий-->
             <?php foreach ($categories as $value) : ?>
             <li class='nav__item <?=$value['symbol_code'] === $sqlCatLot['symbol_code'] ? 'nav__item--current' : '' ?>'>
-               <a href="all-lots.php?categoryName=<?=$value['symbol_code']?>"><?= $value['name']; ?></a>
+               <a href="all-lots.php?categoryName=<?=$value['symbol_code']?>"><?=htmlspecialchars($value['name'])?></a>
             </li>
             <?php endforeach; ?>
         </ul>
